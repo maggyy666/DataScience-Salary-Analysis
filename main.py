@@ -1,10 +1,6 @@
-import tkinter as tk
+from tkinter import *
+import customtkinter as ctk
 
-root = tk.Tk()
-label1 = tk.Label(root,text="Label1")
-label2 = tk.Label(root, text="Label2")
-label1.pack()
-label2.pack()
 root = ctk.CTk()
 root.geometry('1400x600')
 root.title("Application")
