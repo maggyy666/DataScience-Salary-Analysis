@@ -9,7 +9,6 @@ def generate_plot():
     top_jobs = salary_per_title.head(3)
     bottom_jobs = salary_per_title.tail(3)
     middle_jobs = salary_per_title[3:-3].sample(4).sort_values(ascending=False)
-    selected_jobs = pd.concat([top_jobs,middle_jobs,bottom_jobs])
     selected_jobs = selected_jobs.reset_index()
 
     #creating plot
@@ -23,8 +22,7 @@ def generate_plot():
     fig.patch.set_facecolor('#2C2C2C')
 
     #margins
-    fig.subplots_adjust(left=0,right=0.95, top=0.9, bottom=0.1)
-    fig.tight_layout(pad=1.0)
+    fig.subplots_adjust(left=0.15,right=0.95, top=0.85, bottom=0.15)
     ax.margins(x=0)
 
     ax.spines['bottom'].set_color('white')
@@ -75,14 +73,13 @@ def generate_pie_chart():
         startangle=140,
         colors=plt.cm.Paired(range(len(job_count)))
     )
-    #legend
-    ax.legend(wedges,job_titles,title='Job Titles',loc='',bbox_to_anchor=(1,0,0.5,1))
+
 
     #design
-    ax.set_title('Top 5 Jobs Titles Distribution',color='white',fontsize=12)
+    ax.set_title('Top 5 Most Common positions in the DS Industry',color='white',fontsize=12)
     fig.patch.set_facecolor('#2C2C2C')
     ax.set_facecolor('#1E1E1E')
     plt.gca().set_aspect('equal')
 
-
+    ax.set_position([0.1,0.1,0.8,0.8])
     return fig
