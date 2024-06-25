@@ -68,9 +68,9 @@ main_frame.grid_columnconfigure(2, weight=1)  # Spacer between
 main_frame.grid_columnconfigure(3, weight=10)  # Tile 2
 main_frame.grid_columnconfigure(4, weight=1)  # Right Spacer
 
-main_frame.grid_rowconfigure(1, weight=1)  #Top spacer
-main_frame.grid_rowconfigure(2, weight=10)  #Tiles row
-main_frame.grid_rowconfigure(3, weight=1)  # Bottom spacer
+main_frame.grid_rowconfigure(0, weight=1)  # Top spacer
+main_frame.grid_rowconfigure(1, weight=10)  # Tiles row
+main_frame.grid_rowconfigure(2, weight=1)  # Bottom spacer
 
 #tiles
 tile1 = ctk.CTkFrame(main_frame, fg_color='#2C2C2C')
