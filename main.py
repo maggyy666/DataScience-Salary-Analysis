@@ -36,7 +36,18 @@ def switch_to_experience_salary():
 navbar.grid_columnconfigure(0,weight=1)
 navbar_label = ctk.CTkLabel(navbar,text="My Dashboard",fg_color='#333333')
 navbar_label.grid(row=0,column=0,padx=1,pady=1,sticky='w')
+def switch_to_job_location():
+    update_plot1_with_job_locations()
+    update_plot2_with_common_positions()
 
+home_button = ctk.CTkButton(navbar, text='Home', command=switch_to_home)
+home_button.grid(row=0, column=1, padx=10, pady=5)
+
+experience_salary_button = ctk.CTkButton(navbar, text='Salary by Experience', command=switch_to_experience_salary)
+experience_salary_button.grid(row=0, column=2, padx=10, pady=5)
+
+job_location_button = ctk.CTkButton(navbar, text='Jobs by Location', command=switch_to_job_location)
+job_location_button.grid(row=0, column=3, padx=10, pady=5)
 
 #sidebar
 side_frame = ctk.CTkFrame(root, width=200, height=200, corner_radius=0, fg_color='#2C2C2C')
