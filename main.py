@@ -182,12 +182,29 @@ job_titles = [
 
 for title in job_titles:
     title_button = ctk.CTkButton(
+        job_titles_frame,
+        text=title,
         width=180,
         height=40,
-        fg_color='#2C2C2C'
+        fg_color='#2C2C2C',
+        command=lambda t=title: print(f"{t} button pressed")
     )
-    button.grid(pady=5)
+    title_button.pack(pady=5)
+
+# About button
+about_button = ctk.CTkButton(
+    side_frame,
+    text='About',
+    width=180,
+    height=40,
+    fg_color='#2C2C2C',
+    font=('Helvetica', 18, 'bold')
+)
+about_button.grid(row=4, column=0, pady=5)
+
 bottom_spacer = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
-bottom_spacer.grid(row=len(buttons)+1,column=0,sticky='ew')
-#run
+bottom_spacer.grid(row=5, column=0, sticky='ew')
+
+# Run
 root.mainloop()
+
