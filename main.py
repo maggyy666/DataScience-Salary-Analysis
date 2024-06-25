@@ -83,6 +83,47 @@ tile2.grid(row=1, column=3, padx=(5,10), pady=(10,5), sticky='nsew')
 def add_plot(tile):
     fig = generate_plot()
     canvas = FigureCanvasTkAgg(fig, tile)
+def update_plot1_with_job_titles():
+    data = pd.read_csv('ds_salaries.csv')
+    salary_per_title = data.groupby('job_title')['salary_in_usd'].mean().sort_values(ascending=False)
+    selected_jobs = pd.concat([salary_per_title.head(3), salary_per_title.tail(3), salary_per_title[3:-3].sample(4)]).reset_index()
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.barh(selected_jobs['job_title'], selected_jobs['salary_in_usd'], height=0.8, color='#5bc0de')
+    style_plot(fig, ax, 'Average Salary per Job in Data Science', 'Average Salary in USD')
+    plot_on_tile(fig, tile1)
+
+
+def update_plot1_with_experience_salary():
+    experience_salary = data.groupby('experience_level')['salary_in_usd'].mean().sort_values()
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.barh(experience_salary.index, experience_salary.values, color='#5bc0de')
+    style_plot(fig, ax, 'Average Salary by Experience Level', 'Average Salary in USD')
+    plot_on_tile(fig, tile1)
+
+def update_plot1_with_job_locations():
+    job_location = data['company_location'].value_counts().head(10)
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.barh(job_location.index, job_location.values, color='#5bc0de')
+    style_plot(fig, ax, 'Top 10 Job Locations', 'Number of Job Titles')
+    plot_on_tile(fig, tile1)
+
+def update_plot2_with_common_positions():
+    job_count = data['job_title'].value_counts().head(5)
+    fig, ax = plt.subplots()
+    wedges, texts, autotexts = ax.pie(
+        job_count,
+        labels=job_count.index,
+        autopct=lambda pct: format_label(pct, job_count.values),
+        textprops={'color':'white'},
+        startangle=140,
+        colors=plt.cm.Paired(range(len(job_count)))
+    )
+    ax.set_title('Top 5 Most Common Positions in the DS Industry', color='white', fontsize=12)
+    fig.patch.set_facecolor('#2C2C2C')
+    ax.set_facecolor('#1E1E1E')
+    plt.gca().set_aspect('equal')
+    plot_on_tile(fig, tile2)
+
     canvas.draw()
     canvas.get_tk_widget().pack(fill=BOTH, expand=True, padx=20, pady=20)
 add_plot(tile1)
