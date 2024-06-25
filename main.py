@@ -14,6 +14,23 @@ root.configure(bg='#1E1E1E')
 #Navbar
 navbar = ctk.CTkFrame(root,height=20,fg_color='#333333')
 navbar.grid(row=0,column=0,columnspan=2,sticky='ew')
+# Navbar
+navbar = ctk.CTkFrame(root, height=40, fg_color='#333333')
+navbar.grid(row=0, column=0, columnspan=2, sticky='ew')
+
+# Placeholder for buttons
+navbar.grid_columnconfigure(0, weight=1)
+navbar_label = ctk.CTkLabel(navbar, text="My Dashboard", fg_color='#333333', font=('Helvetica', 16, 'bold'))
+navbar_label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
+
+# Adding buttons to the navbar
+def switch_to_home():
+    update_plot1_with_job_titles()
+    update_plot2_with_common_positions()
+
+def switch_to_experience_salary():
+    update_plot1_with_experience_salary()
+    update_plot2_with_common_positions()
 
 #Placeholder for buttons
 navbar.grid_columnconfigure(0,weight=1)
