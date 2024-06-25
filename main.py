@@ -126,26 +126,62 @@ def update_plot2_with_common_positions():
 
     canvas.draw()
     canvas.get_tk_widget().pack(fill=BOTH, expand=True, padx=20, pady=20)
-add_plot(tile1)
 
-def add_pie_chart(tile):
-    fig = generate_pie_chart()
-    canvas = FigureCanvasTkAgg(fig, tile)
-    canvas.draw()
-    canvas.get_tk_widget().pack(fill=BOTH, expand=True)
-add_pie_chart(tile2)
+def format_label(pct, allvalues):
+    absolute = int(pct/100*sum(allvalues))
+    return "{:.1f}%\n({:d})".format(pct, absolute)
 
+# Initially load the default plots
+switch_to_home()
+# Function to toggle the display of Job Titles options
+def toggle_job_titles():
+    if job_titles_frame.winfo_ismapped():
+        job_titles_frame.grid_remove()
+    else:
+        job_titles_frame.grid()
+# Top spacers / buttons
+top_spacer = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
+top_spacer.grid(row=0, column=0, sticky='ew')
 
+home_button = ctk.CTkButton(
+    side_frame,
+    text='Home',
+    width=180,
+    height=40,
+    fg_color='#2C2C2C',
+    font=('Helvetica', 18, 'bold')
+)
+home_button.grid(row=1, column=0, pady=5)
 
-#top spacers / buttons
-top_spacer = ctk.CTkFrame(side_frame,fg_color='#2C2C2C')
-top_spacer.grid(row=0,column=0,sticky='ew')
+# Job Titles button with toggle functionality
+job_titles_button = ctk.CTkButton(
+    side_frame,
+    text='Job Titles v',
+    width=180,
+    height=40,
+    fg_color='#2C2C2C',
+    command=toggle_job_titles,
+    font=('Helvetica',18,'bold')
+)
+job_titles_button.grid(row=2, column=0, pady=5)
 
-buttons = ['Home','About']
-for text in buttons:
-    button = ctk.CTkButton(
-        side_frame,
-        text=text,
+# Frame for Job Titles options
+job_titles_frame = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
+job_titles_frame.grid(row=3, column=0, sticky='ew', padx=5, pady=5)
+job_titles_frame.grid_remove()  # Initially hide the Job Titles options
+
+# Add options under Job Titles
+job_titles = [
+    'Data Scientists',
+    'Data Engineers',
+    'ML & AI Specialists',
+    'DS Management',
+    'Research Roles',
+    'Miscellaneous'
+]
+
+for title in job_titles:
+    title_button = ctk.CTkButton(
         width=180,
         height=40,
         fg_color='#2C2C2C'
