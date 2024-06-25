@@ -1,8 +1,9 @@
 from tkinter import *
 import customtkinter as ctk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from plot_generator import generate_plot
-from plot_generator import generate_pie_chart
+import pandas as pd
+import matplotlib.pyplot as plt
+
 
 root = ctk.CTk()
 root.geometry('1800x800')
@@ -11,9 +12,6 @@ ctk.set_default_color_theme('blue')
 
 root.configure(bg='#1E1E1E')
 
-#Navbar
-navbar = ctk.CTkFrame(root,height=20,fg_color='#333333')
-navbar.grid(row=0,column=0,columnspan=2,sticky='ew')
 # Navbar
 navbar = ctk.CTkFrame(root, height=40, fg_color='#333333')
 navbar.grid(row=0, column=0, columnspan=2, sticky='ew')
@@ -32,10 +30,6 @@ def switch_to_experience_salary():
     update_plot1_with_experience_salary()
     update_plot2_with_common_positions()
 
-#Placeholder for buttons
-navbar.grid_columnconfigure(0,weight=1)
-navbar_label = ctk.CTkLabel(navbar,text="My Dashboard",fg_color='#333333')
-navbar_label.grid(row=0,column=0,padx=1,pady=1,sticky='w')
 def switch_to_job_location():
     update_plot1_with_job_locations()
     update_plot2_with_common_positions()
@@ -49,15 +43,15 @@ experience_salary_button.grid(row=0, column=2, padx=10, pady=5)
 job_location_button = ctk.CTkButton(navbar, text='Jobs by Location', command=switch_to_job_location)
 job_location_button.grid(row=0, column=3, padx=10, pady=5)
 
-#sidebar
+# Sidebar
 side_frame = ctk.CTkFrame(root, width=200, height=200, corner_radius=0, fg_color='#2C2C2C')
 side_frame.grid(row=1, column=0, sticky='ns')
 
-#grid @layout
-root.grid_columnconfigure(1,weight=1)
-root.grid_rowconfigure(1,weight=1)
+# Grid @layout
+root.grid_columnconfigure(1, weight=1)
+root.grid_rowconfigure(1, weight=1)
 
-#mainframe
+# Mainframe
 main_frame = ctk.CTkFrame(root, corner_radius=0, fg_color='#1E1E1E')
 main_frame.grid(row=1, column=1, sticky='nsew')
 
@@ -72,17 +66,17 @@ main_frame.grid_rowconfigure(0, weight=1)  # Top spacer
 main_frame.grid_rowconfigure(1, weight=10)  # Tiles row
 main_frame.grid_rowconfigure(2, weight=1)  # Bottom spacer
 
-#tiles
+# Tiles
 tile1 = ctk.CTkFrame(main_frame, fg_color='#2C2C2C')
-tile1.grid(row=1, column=1, padx=(10,5), pady=(10,5), sticky='nsew')
+tile1.grid(row=1, column=1, padx=(10, 5), pady=(10, 5), sticky='nsew')
 
 tile2 = ctk.CTkFrame(main_frame, fg_color='#2C2C2C')
-tile2.grid(row=1, column=3, padx=(5,10), pady=(10,5), sticky='nsew')
+tile2.grid(row=1, column=3, padx=(5, 10), pady=(10, 5), sticky='nsew')
 
-#plot in tiles
-def add_plot(tile):
-    fig = generate_plot()
-    canvas = FigureCanvasTkAgg(fig, tile)
+# Load data
+data = pd.read_csv('ds_salaries.csv')
+
+# Plot functions
 def update_plot1_with_job_titles():
     data = pd.read_csv('ds_salaries.csv')
     salary_per_title = data.groupby('job_title')['salary_in_usd'].mean().sort_values(ascending=False)
