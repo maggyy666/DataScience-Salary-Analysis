@@ -61,12 +61,12 @@ root.grid_rowconfigure(1,weight=1)
 main_frame = ctk.CTkFrame(root, corner_radius=0, fg_color='#1E1E1E')
 main_frame.grid(row=1, column=1, sticky='nsew')
 
-#grid @mainframe
-main_frame.grid_columnconfigure(0, weight=1)  #left spacer
-main_frame.grid_columnconfigure(1, weight=0)  #Tile 1
-main_frame.grid_columnconfigure(2, weight=1)  #Spacer between
-main_frame.grid_columnconfigure(3, weight=10)  #Tile 2
-main_frame.grid_columnconfigure(4, weight=1)  #Right Spacer
+# Grid @mainframe
+main_frame.grid_columnconfigure(0, weight=1)  # Left spacer
+main_frame.grid_columnconfigure(1, weight=0)  # Tile 1
+main_frame.grid_columnconfigure(2, weight=1)  # Spacer between
+main_frame.grid_columnconfigure(3, weight=10)  # Tile 2
+main_frame.grid_columnconfigure(4, weight=1)  # Right Spacer
 
 main_frame.grid_rowconfigure(1, weight=1)  #Top spacer
 main_frame.grid_rowconfigure(2, weight=10)  #Tiles row
