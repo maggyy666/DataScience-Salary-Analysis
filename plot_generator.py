@@ -1,18 +1,17 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-def generate_plot():
-    #csv
-    data = pd.read_csv('ds_salaries.csv')
-    #data grouping job_title | avg salary in USD
-    salary_per_title = data.groupby('job_title')['salary_in_usd'].mean().sort_values(ascending=False)
+import seaborn as sns
 
-    top_jobs = salary_per_title.head(3)
-    bottom_jobs = salary_per_title.tail(3)
-    middle_jobs = salary_per_title[3:-3].sample(4).sort_values(ascending=False)
-    selected_jobs = selected_jobs.reset_index()
+def generate_plot(dataset):
+    if dataset == 'job_titles':
+        data = pd.read_csv('ds_salaries.csv')
+        salary_per_title = data.groupby('job_title')['salary_in_usd'].mean().sort_values(ascending=False)
 
-    #creating plot
-    fig,ax=plt.subplots(figsize=(8,6))
+        top_jobs = salary_per_title.head(3)
+        bottom_jobs = salary_per_title.tail(3)
+        middle_jobs = salary_per_title[3:-3].sample(4).sort_values(ascending=False)
+        selected_jobs = pd.concat([top_jobs, middle_jobs, bottom_jobs])
+        selected_jobs = selected_jobs.reset_index()
 
     bar_width = 0.6
     ax.barh(selected_jobs['job_title'],selected_jobs['salary_in_usd'],height=bar_width,color='#5bc0de')
