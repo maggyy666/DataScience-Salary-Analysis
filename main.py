@@ -174,6 +174,30 @@ def update_plot2_with_common_positions():
     plt.gca().set_aspect('equal')
     plot_on_tile(fig, tile2)
 
+def update_plot2_with_country_distribution():
+    country_names_mapping = {
+        'IN': 'India',
+        'US': 'United States',
+        'CA': 'Canada',
+        'DE': 'Germany',
+        'FR': 'France',
+        'GB': 'United Kingdom',
+        'ES': 'Spain',
+        'AU': 'Australia',
+        'BR': 'Brazil',
+        'NL': 'Netherlands',
+        'IT': 'Italy',
+        'CH': 'Switzerland',
+        'AT': 'Austria',
+        'SG': 'Singapore',
+        'PL': 'Poland',
+        'BE': 'Belgium',
+        'IE': 'Ireland',
+        'IL': 'Israel',
+        'MX': 'Mexico',
+        'SE': 'Sweden',
+    }
+    country_count = data[data['company_location']!='US']['company_location'].value_counts().head(10)
 def style_plot(fig, ax, title, xlabel):
     ax.set_facecolor('#1E1E1E')
     fig.patch.set_facecolor('#2C2C2C')
