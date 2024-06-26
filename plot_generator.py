@@ -41,7 +41,47 @@ def generate_plot():
     #Set x-axis limit to show max value
     max_salary = selected_jobs['salary_in_usd'].max()
     ax.set_xlim(0,max_salary*1.1)
+        ax.grid(True, axis='x', color='gray', linestyle='--', linewidth=0.5)
 
+        max_salary = selected_jobs['salary_in_usd'].max()
+        ax.set_xlim(0, max_salary * 1.1)
+
+        for label in ax.get_yticklabels():
+            label.set_fontsize(8)
+            label.set_color('white')
+        for label in ax.get_xticklabels():
+            label.set_fontsize(8)
+            label.set_color('white')
+
+        return fig
+
+    elif dataset == 'experience_level':
+        data = pd.read_csv('ds_salaries.csv')
+        experience_salary = data.groupby('experience_level')['salary_in_usd'].mean().sort_values()
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.barh(experience_salary.index, experience_salary.values, color='#5bc0de')
+        style_plot(fig, ax, 'Average Salary by Experience Level', 'Average Salary in USD')
+        return fig
+
+    elif dataset == 'job_locations':
+        data = pd.read_csv('ds_salaries.csv')
+        job_location = data['company_location'].value_counts().head(10)
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.barh(job_location.index, job_location.values, color='#5bc0de')
+        style_plot(fig, ax, 'Top 10 Job Locations', 'Number of Job Titles')
+        return fig
+
+def style_plot(fig, ax, title, xlabel):
+    ax.set_facecolor('#1E1E1E')
+    fig.patch.set_facecolor('#2C2C2C')
+    ax.spines['bottom'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['right'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+    ax.set_xlabel(xlabel, fontsize=12, color='white', wrap=True)
+    ax.set_title(title, fontsize=10, color='white')
     for label in ax.get_yticklabels():
         label.set_fontsize(8)
         label.set_color('white')
