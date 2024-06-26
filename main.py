@@ -44,6 +44,35 @@ def switch_to_job_location():
     update_plot2_with_common_positions()
 
 home_button = ctk.CTkButton(navbar, text='Home', command=switch_to_home)
+def switch_to_job_titles():
+    update_plot1_with_job_titles()
+
+#Func for PIE CHART BUTTONS
+def switch_to_country_distribution():
+    update_plot2_with_country_distribution()
+
+def switch_to_experience_distribution():
+    update_plot2_with_experience_distribution()
+
+def switch_to_company_size_distribution():
+    update_plot2_with_company_size_distribution()
+
+
+
+#PIE CHART BUTTONS - shifted to the right
+country_distribution_button = ctk.CTkButton(navbar, text='Country Distribution', command=switch_to_country_distribution)
+country_distribution_button.grid(row=0, column=4, padx=(0, 10), pady=5, sticky='e')
+
+experience_distribution_button = ctk.CTkButton(navbar, text='Experience Distribution', command=switch_to_experience_distribution)
+experience_distribution_button.grid(row=0, column=5, padx=(0, 10), pady=5, sticky='e')
+
+company_size_distribution_button = ctk.CTkButton(navbar, text='Company Size Distribution', command=switch_to_company_size_distribution)
+company_size_distribution_button.grid(row=0, column=6, padx=(0, 10), pady=5, sticky='e')
+
+
+
+#BAR CHART BUTTONS
+home_button = ctk.CTkButton(navbar, text='Average Salary', command=switch_to_job_titles)
 home_button.grid(row=0, column=1, padx=10, pady=5)
 
 experience_salary_button = ctk.CTkButton(navbar, text='Salary by Experience', command=switch_to_experience_salary)
