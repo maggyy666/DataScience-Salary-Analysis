@@ -124,6 +124,24 @@ def update_plot1_with_job_titles():
     style_plot(fig, ax, 'Average Salary per Job in Data Science', 'Average Salary in USD')
     plot_on_tile(fig, tile1)
 
+experience_level_mapping = {
+    'EX':'Executive-level/Director',
+    'SE':'Senior-level/Expert',
+    'MI':'Mid-level/Intermediate',
+    'EN':'Entry-level/Junior'
+}
+country_names_mapping = {
+    'IN':'India',
+    'ES':'Spain',
+    'CA':'Canada',
+    'GB':'United Kingdom',
+    'US':'United States'
+}
+company_size_mapping = {
+    'S':'Small [<50 Employees]',
+    'M':'Medium [<249 Employees]',
+    'L':'Large [>250 Employees]'
+}
 
 def update_plot1_with_experience_salary():
     experience_salary = data.groupby('experience_level')['salary_in_usd'].mean().sort_values()
