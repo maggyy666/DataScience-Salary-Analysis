@@ -19,6 +19,15 @@ navbar.grid(row=0, column=0, columnspan=2, sticky='ew')
 # Placeholder for buttons
 navbar.grid_columnconfigure(0, weight=1)
 navbar_label = ctk.CTkLabel(navbar, text="My Dashboard", fg_color='#333333', font=('Helvetica', 16, 'bold'))
+# Navbar grid configuration
+navbar.grid_columnconfigure(1, weight=0)
+navbar.grid_columnconfigure(2, weight=0)
+navbar.grid_columnconfigure(3, weight=0)
+navbar.grid_columnconfigure(4, weight=1)  # This creates a spacer between left and right aligned buttons
+navbar.grid_columnconfigure(5, weight=0)
+navbar.grid_columnconfigure(6, weight=0)
+navbar.grid_columnconfigure(7, weight=0)
+navbar_label = ctk.CTkLabel(navbar, text="Data Science Salary Analysis App", fg_color='#333333', font=('Helvetica', 16, 'bold'))
 navbar_label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
 # Adding buttons to the navbar
