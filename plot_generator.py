@@ -82,4 +82,45 @@ def generate_pie_chart():
     plt.gca().set_aspect('equal')
 
     ax.set_position([0.1,0.1,0.8,0.8])
+    return fig    ax.set_position([0.1, 0.1, 0.8, 0.8])
     return fig
+
+
+def generate_box_plot():
+    data = pd.read_csv('ds_salaries.csv')
+
+    # Create a figure and axis with a dark background
+    fig, ax = plt.subplots(figsize=(12, 8))
+    fig.patch.set_facecolor('#2C2C2C')
+    ax.set_facecolor('#1E1E1E')
+
+    # Create the box plot
+    sns.boxplot(x='company_location', y='salary_in_usd', data=data, palette='Set3', ax=ax)
+
+    # Set title and labels with white color
+    ax.set_title('Salary Distribution by Company Location', fontsize=16, color='white')
+    ax.set_xlabel('Company Location', fontsize=12, color='white')
+    ax.set_ylabel('Salary in USD', fontsize=12, color='white')
+
+    # Adjust tick parameters to match the dark theme
+    ax.tick_params(axis='x', colors='white', rotation=45)
+    ax.tick_params(axis='y', colors='white')
+
+    # Remove any extra spines and set their color to white
+    for spine in ax.spines.values():
+        spine.set_visible(True)
+        spine.set_color('white')
+
+    # Adjust layout to ensure the plot fits well within the tile
+    plt.tight_layout()
+
+    return fig
+
+
+def plot_on_tile(fig, tile):
+    for widget in tile.winfo_children():
+        widget.destroy()
+    canvas = FigureCanvasTkAgg(fig, master=tile)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill=BOTH, expand=True, padx=15, pady=20)
+
