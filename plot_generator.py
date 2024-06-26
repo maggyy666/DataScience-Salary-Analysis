@@ -13,12 +13,10 @@ def generate_plot(dataset):
         selected_jobs = pd.concat([top_jobs, middle_jobs, bottom_jobs])
         selected_jobs = selected_jobs.reset_index()
 
-    bar_width = 0.6
-    ax.barh(selected_jobs['job_title'],selected_jobs['salary_in_usd'],height=bar_width,color='#5bc0de')
+        fig, ax = plt.subplots(figsize=(8, 6))
 
-    #design
-    ax.set_facecolor('#1E1E1E')
-    fig.patch.set_facecolor('#2C2C2C')
+        bar_width = 0.6
+        ax.barh(selected_jobs['job_title'], selected_jobs['salary_in_usd'], height=bar_width, color='#5bc0de')
 
         ax.set_facecolor('#1E1E1E')
         fig.patch.set_facecolor('#2C2C2C')
@@ -36,9 +34,6 @@ def generate_plot(dataset):
         ax.set_xlabel('Average Salary in USD', fontsize=12, color='white', wrap=True)
         ax.set_title('Average Salary per Job in Data Science', fontsize=10, color='white')
 
-    #Set x-axis limit to show max value
-    max_salary = selected_jobs['salary_in_usd'].max()
-    ax.set_xlim(0,max_salary*1.1)
         ax.grid(True, axis='x', color='gray', linestyle='--', linewidth=0.5)
 
         max_salary = selected_jobs['salary_in_usd'].max()
@@ -86,41 +81,35 @@ def style_plot(fig, ax, title, xlabel):
     for label in ax.get_xticklabels():
         label.set_fontsize(8)
         label.set_color('white')
-
-        return fig
-
+    ax.grid(True, axis='x', color='gray', linestyle='--', linewidth=0.5)
 
 def generate_pie_chart():
-    data=pd.read_csv('ds_salaries.csv')
+    data = pd.read_csv('ds_salaries.csv')
 
-    #grouping
     job_count = data['job_title'].value_counts().head(5)
     job_titles = job_count.index
     job_counts = job_count.values
-    fig,ax=plt.subplots()
+    fig, ax = plt.subplots()
 
-    def format_label(pct,allvalues):
-        absolute = int(pct/100*sum(allvalues))
+    def format_label(pct, allvalues):
+        absolute = int(pct / 100 * sum(allvalues))
         return "{:.1f}%\n({:d})".format(pct, absolute)
 
-    wedges,texts,autotexts = ax.pie(
+    wedges, texts, autotexts = ax.pie(
         job_count,
         labels=job_titles,
-        autopct=lambda pct:format_label(pct,job_counts),
-        textprops={'color':'white'},
+        autopct=lambda pct: format_label(pct, job_counts),
+        textprops={'color': 'white'},
         startangle=140,
         colors=plt.cm.Paired(range(len(job_count)))
     )
 
-
-    #design
-    ax.set_title('Top 5 Most Common positions in the DS Industry',color='white',fontsize=12)
+    ax.set_title('Top 5 Most Common positions in the DS Industry', color='white', fontsize=12)
     fig.patch.set_facecolor('#2C2C2C')
     ax.set_facecolor('#1E1E1E')
     plt.gca().set_aspect('equal')
 
-    ax.set_position([0.1,0.1,0.8,0.8])
-    return fig    ax.set_position([0.1, 0.1, 0.8, 0.8])
+    ax.set_position([0.1, 0.1, 0.8, 0.8])
     return fig
 
 
