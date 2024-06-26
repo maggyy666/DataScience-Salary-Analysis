@@ -20,22 +20,21 @@ def generate_plot(dataset):
     ax.set_facecolor('#1E1E1E')
     fig.patch.set_facecolor('#2C2C2C')
 
-    #margins
-    fig.subplots_adjust(left=0.15,right=0.95, top=0.85, bottom=0.15)
-    ax.margins(x=0)
+        ax.set_facecolor('#1E1E1E')
+        fig.patch.set_facecolor('#2C2C2C')
 
-    ax.spines['bottom'].set_color('white')
-    ax.spines['top'].set_color('white')
-    ax.spines['right'].set_color('white')
-    ax.spines['left'].set_color('white')
-    ax.tick_params(axis='x',colors='white')
-    ax.tick_params(axis='y',colors='white')
+        fig.subplots_adjust(left=0.30, right=0.95, top=0.85, bottom=0.15)
+        ax.margins(x=0)
 
-    ax.set_xlabel('Average Salary in USD',fontsize=12,color='white',wrap=True)
-    ax.set_title('Average Salary per Job in Data Science',fontsize=10,color='white')
+        ax.spines['bottom'].set_color('white')
+        ax.spines['top'].set_color('white')
+        ax.spines['right'].set_color('white')
+        ax.spines['left'].set_color('white')
+        ax.tick_params(axis='x', colors='white')
+        ax.tick_params(axis='y', colors='white')
 
-    #Adding grid lines
-    ax.grid(True, axis='x', color='gray', linestyle='--', linewidth=0.5)
+        ax.set_xlabel('Average Salary in USD', fontsize=12, color='white', wrap=True)
+        ax.set_title('Average Salary per Job in Data Science', fontsize=10, color='white')
 
     #Set x-axis limit to show max value
     max_salary = selected_jobs['salary_in_usd'].max()
