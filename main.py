@@ -3,6 +3,7 @@ import customtkinter as ctk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 import matplotlib.pyplot as plt
+from plot_generator import *
 
 
 root = ctk.CTk()
@@ -23,27 +24,27 @@ navbar_label = ctk.CTkLabel(navbar, text="My Dashboard", fg_color='#333333', fon
 navbar.grid_columnconfigure(1, weight=0)
 navbar.grid_columnconfigure(2, weight=0)
 navbar.grid_columnconfigure(3, weight=0)
-navbar.grid_columnconfigure(4, weight=1)  # This creates a spacer between left and right aligned buttons
-navbar.grid_columnconfigure(5, weight=0)
-navbar.grid_columnconfigure(6, weight=0)
+navbar.grid_columnconfigure(4, weight=1)  # Spacer before label
+navbar.grid_columnconfigure(5, weight=0)  # Label column
+navbar.grid_columnconfigure(6, weight=1)  # Spacer after label
 navbar.grid_columnconfigure(7, weight=0)
+navbar.grid_columnconfigure(8, weight=0)
+navbar.grid_columnconfigure(9, weight=0)
+navbar.grid_columnconfigure(10, weight=1)  # Spacer after last buttonnavbar.grid_columnconfigure(7, weight=0)
 navbar_label = ctk.CTkLabel(navbar, text="Data Science Salary Analysis App", fg_color='#333333', font=('Helvetica', 16, 'bold'))
 navbar_label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
-# Adding buttons to the navbar
+#FUNC for BAR CHART BUTTONS
 def switch_to_home():
     update_plot1_with_job_titles()
     update_plot2_with_common_positions()
-
+    current_section_label.configure(text='Home')
 def switch_to_experience_salary():
     update_plot1_with_experience_salary()
-    update_plot2_with_common_positions()
 
 def switch_to_job_location():
     update_plot1_with_job_locations()
-    update_plot2_with_common_positions()
 
-home_button = ctk.CTkButton(navbar, text='Home', command=switch_to_home)
 def switch_to_job_titles():
     update_plot1_with_job_titles()
 
@@ -59,12 +60,12 @@ def switch_to_company_size_distribution():
 
 
 
-#PIE CHART BUTTONS - shifted to the right
+# PIE CHART BUTTONS - shifted to the right
 country_distribution_button = ctk.CTkButton(navbar, text='Country Distribution', command=switch_to_country_distribution)
-country_distribution_button.grid(row=0, column=4, padx=(0, 10), pady=5, sticky='e')
+country_distribution_button.grid(row=0, column=7, padx=(0, 10), pady=5, sticky='e')
 
 experience_distribution_button = ctk.CTkButton(navbar, text='Experience Distribution', command=switch_to_experience_distribution)
-experience_distribution_button.grid(row=0, column=5, padx=(0, 10), pady=5, sticky='e')
+experience_distribution_button.grid(row=0, column=8, padx=(0, 10), pady=5, sticky='e')
 
 company_size_distribution_button = ctk.CTkButton(navbar, text='Company Size Distribution', command=switch_to_company_size_distribution)
 company_size_distribution_button.grid(row=0, column=6, padx=(0, 10), pady=5, sticky='e')
