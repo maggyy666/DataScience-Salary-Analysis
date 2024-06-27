@@ -214,9 +214,44 @@ def update_plot2_with_country_distribution():
         'SE': 'Sweden',
     }
     country_count = data[data['company_location']!='US']['company_location'].value_counts().head(10)
+    country_count.index = country_count.index.map(lambda x:country_names_mapping.get(x,'Other'))
+
+
+    fig, ax = plt.subplots()
+    ax.pie(country_count, labels=country_count.index, autopct=lambda pct: format_label(pct, country_count.values), textprops={'color': 'white'}, startangle=140, colors=plt.cm.Paired(range(len(country_count))))
+    ax.set_title('Distribution by Company Country', color='white', fontsize=12)
+    fig.patch.set_facecolor('#2C2C2C')
+    ax.set_facecolor('#1E1E1E')
+    plt.gca().set_aspect('equal')
+    plot_on_tile(fig, tile2)
+
+def update_plot2_with_experience_distribution():
+    experience_count = data['experience_level'].value_counts()
+    experience_count.index = experience_count.index.map(experience_level_mapping)
+    fig, ax = plt.subplots()
+    ax.pie(experience_count, labels=experience_count.index, autopct=lambda pct: format_label(pct, experience_count.values), textprops={'color':'white'}, startangle=140, colors=plt.cm.Paired(range(len(experience_count))))
+
+    ax.set_title('Distribution by Experience Level', color='white', fontsize=12)
+    fig.patch.set_facecolor('#2C2C2C')
+    ax.set_facecolor('#1E1E1E')
+    plt.gca().set_aspect('equal')
+    plot_on_tile(fig, tile2)
+
+def update_plot2_with_company_size_distribution():
+    company_size_count = data['company_size'].value_counts()
+    company_size_count.index = company_size_count.index.map(company_size_mapping)
+    fig, ax = plt.subplots()
+    ax.pie(company_size_count, labels=company_size_count.index, autopct=lambda pct: format_label(pct, company_size_count.values), textprops={'color':'white'}, startangle=140, colors=plt.cm.Paired(range(len(company_size_count))))
+    ax.set_title('Distribution by Company Size', color='white', fontsize=12)
+    fig.patch.set_facecolor('#2C2C2C')
+    ax.set_facecolor('#1E1E1E')
+    plt.gca().set_aspect('equal')
+    plot_on_tile(fig, tile2)
+
 def style_plot(fig, ax, title, xlabel):
     ax.set_facecolor('#1E1E1E')
     fig.patch.set_facecolor('#2C2C2C')
+    fig.subplots_adjust(left=0.2)
     ax.spines['bottom'].set_color('white')
     ax.spines['top'].set_color('white')
     ax.spines['right'].set_color('white')
@@ -238,7 +273,7 @@ def plot_on_tile(fig, tile):
         widget.destroy()
     canvas = FigureCanvasTkAgg(fig, master=tile)
     canvas.draw()
-    canvas.get_tk_widget().pack(fill=BOTH, expand=True, padx=20, pady=20)
+    canvas.get_tk_widget().pack(fill=BOTH, expand=True, padx=15, pady=20)
 
 def format_label(pct, allvalues):
     absolute = int(pct/100*sum(allvalues))
@@ -266,10 +301,10 @@ home_button = ctk.CTkButton(
 )
 home_button.grid(row=1, column=0, pady=5)
 
-# Job Titles button with toggle functionality
+# Job Titles list
 job_titles_button = ctk.CTkButton(
     side_frame,
-    text='Job Titles v',
+    text='Job Titles',
     width=180,
     height=40,
     fg_color='#2C2C2C',
@@ -278,19 +313,41 @@ job_titles_button = ctk.CTkButton(
 )
 job_titles_button.grid(row=2, column=0, pady=5)
 
-# Frame for Job Titles options
 job_titles_frame = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
 job_titles_frame.grid(row=3, column=0, sticky='ew', padx=5, pady=5)
 job_titles_frame.grid_remove()  # Initially hide the Job Titles options
+def clear_main_frame():
+    for widget in main_frame.winfo_children():
+        widget.destroy()
+def show_data_scientists_analysis():
+    clear_main_frame()
+    current_section_label.configure(text='Data Scientists')
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_columnconfigure(1, weight=1)
+    main_frame.grid_columnconfigure(2, weight=1)
+    main_frame.grid_columnconfigure(3, weight=1)
+    main_frame.grid_columnconfigure(4, weight=1)
+    main_frame.grid_columnconfigure(5, weight=1)
+    main_frame.grid_columnconfigure(6, weight=1)
 
-# Add options under Job Titles
+    main_frame.grid_rowconfigure(0, weight=1)
+    main_frame.grid_rowconfigure(1, weight=1)
+    main_frame.grid_rowconfigure(2, weight=1)
+    main_frame.grid_rowconfigure(3, weight=1)
+
+    tile1 = ctk.CTkFrame(main_frame, fg_color='#2C2C2C')
+    tile1.grid(row=1, column=2, columnspan=3, padx=(10, 5), pady=(10, 5), sticky='nsew')
+
+    fig = generate_box_plot()
+    plot_on_tile(fig, tile1)
+
+
+
+
 job_titles = [
-    'Data Scientists',
-    'Data Engineers',
-    'ML & AI Specialists',
-    'DS Management',
-    'Research Roles',
-    'Miscellaneous'
+    ('Data Scientists', show_data_scientists_analysis),
+    ('Data Engineers', lambda: print("Data Engineers button pressed")),
+    ('ML & AI Specialists', lambda: print("ML & AI Specialists button pressed")),
 ]
 
 for title in job_titles:
