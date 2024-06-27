@@ -137,8 +137,7 @@ def generate_box_plot():
     fig.patch.set_facecolor('#2C2C2C')
     ax.set_facecolor('#1E1E1E')
 
-    # Create the box plot
-    sns.boxplot(x='company_location', y='salary_in_usd', data=data, palette='Set3', ax=ax)
+    sns.boxplot(x='company_location', y='salary_in_usd', data=top_data, palette='Set3', ax=ax)
 
     # Set title and labels with white color
     ax.set_title('Salary Distribution by Company Location', fontsize=16, color='white')
@@ -149,12 +148,11 @@ def generate_box_plot():
     ax.tick_params(axis='x', colors='white', rotation=45)
     ax.tick_params(axis='y', colors='white')
 
-    # Remove any extra spines and set their color to white
+    #Spines removal
     for spine in ax.spines.values():
         spine.set_visible(True)
         spine.set_color('white')
 
-    # Adjust layout to ensure the plot fits well within the tile
     plt.tight_layout()
 
     return fig
