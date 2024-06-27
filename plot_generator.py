@@ -116,6 +116,22 @@ def generate_pie_chart():
 def generate_box_plot():
     data = pd.read_csv('ds_salaries.csv')
 
+    country_mapping = {
+        'ES':'Spain',
+        'US':'United States',
+        'CA':'Canada',
+        'DE':'Denmark',
+        'GB':'United Kingdom',
+        'IN':'India',
+        'FR':'France',
+        'BR':'Brasil',
+        'PT':'Portugal',
+        'GR':'Germany'
+    }
+    top_locations = data['company_location'].value_counts().nlargest(10).index
+    top_data = data[data['company_location'].isin(top_locations)]
+    top_data['company_location'] = top_data['company_location'].map(country_mapping)
+
     # Create a figure and axis with a dark background
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.patch.set_facecolor('#2C2C2C')
