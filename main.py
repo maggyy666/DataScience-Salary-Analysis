@@ -18,9 +18,8 @@ navbar = ctk.CTkFrame(root, height=40, fg_color='#333333')
 navbar.grid(row=0, column=0, columnspan=2, sticky='ew')
 
 # Placeholder for buttons
-navbar.grid_columnconfigure(0, weight=1)
-navbar_label = ctk.CTkLabel(navbar, text="My Dashboard", fg_color='#333333', font=('Helvetica', 16, 'bold'))
 # Navbar grid configuration
+navbar.grid_columnconfigure(0, weight=1)  # Spacer before first button
 navbar.grid_columnconfigure(1, weight=0)
 navbar.grid_columnconfigure(2, weight=0)
 navbar.grid_columnconfigure(3, weight=0)
@@ -68,11 +67,14 @@ experience_distribution_button = ctk.CTkButton(navbar, text='Experience Distribu
 experience_distribution_button.grid(row=0, column=8, padx=(0, 10), pady=5, sticky='e')
 
 company_size_distribution_button = ctk.CTkButton(navbar, text='Company Size Distribution', command=switch_to_company_size_distribution)
-company_size_distribution_button.grid(row=0, column=6, padx=(0, 10), pady=5, sticky='e')
+company_size_distribution_button.grid(row=0, column=9, padx=(0, 10), pady=5, sticky='e')
 
 
+#TITLE LABEL
+current_section_label = ctk.CTkLabel(navbar,text='Home',fg_color='#333333',font=('Helvetica',16,'bold'))
+current_section_label.grid(row=0,column=5,padx=60,pady=10,sticky='w')
 
-#BAR CHART BUTTONS
+# BAR CHART BUTTONS
 home_button = ctk.CTkButton(navbar, text='Average Salary', command=switch_to_job_titles)
 home_button.grid(row=0, column=1, padx=10, pady=5)
 
@@ -120,6 +122,7 @@ def update_plot1_with_job_titles():
     data = pd.read_csv('ds_salaries.csv')
     salary_per_title = data.groupby('job_title')['salary_in_usd'].mean().sort_values(ascending=False)
     selected_jobs = pd.concat([salary_per_title.head(3), salary_per_title.tail(3), salary_per_title[3:-3].sample(4)]).reset_index()
+    selected_jobs = selected_jobs.sort_values(by='salary_in_usd').reset_index(drop=True)
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.barh(selected_jobs['job_title'], selected_jobs['salary_in_usd'], height=0.8, color='#5bc0de')
     style_plot(fig, ax, 'Average Salary per Job in Data Science', 'Average Salary in USD')
@@ -139,20 +142,20 @@ country_names_mapping = {
     'US':'United States'
 }
 company_size_mapping = {
-    'S':'Small [<50 Employees]',
-    'M':'Medium [<249 Employees]',
-    'L':'Large [>250 Employees]'
+    'S':'Small [<50]',
+    'M':'Medium [<249]',
+    'L':'Large [>250]'
 }
 
 def update_plot1_with_experience_salary():
     experience_salary = data.groupby('experience_level')['salary_in_usd'].mean().sort_values()
+    experience_salary.index = experience_salary.index.map(experience_level_mapping)
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.barh(experience_salary.index, experience_salary.values, color='#5bc0de')
     style_plot(fig, ax, 'Average Salary by Experience Level', 'Average Salary in USD')
     plot_on_tile(fig, tile1)
 
 def update_plot1_with_job_locations():
-    job_location = data['company_location'].value_counts().head(10)
     country_mapping = {
         'IN': 'India',
         'ES': 'Spain',
@@ -170,20 +173,14 @@ def update_plot1_with_job_locations():
     job_location.index = job_location.index.map(lambda x:country_mapping.get(x,'Other'))
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.barh(job_location.index, job_location.values, color='#5bc0de')
-    style_plot(fig, ax, 'Top 10 Job Locations', 'Number of Job Titles')
+    style_plot(fig, ax, 'Top 10 Job Locations (Outside US)', 'Number of Job Titles')
     plot_on_tile(fig, tile1)
 
 def update_plot2_with_common_positions():
     job_count = data['job_title'].value_counts().head(5)
     fig, ax = plt.subplots()
-    wedges, texts, autotexts = ax.pie(
-        job_count,
-        labels=job_count.index,
-        autopct=lambda pct: format_label(pct, job_count.values),
-        textprops={'color':'white'},
-        startangle=140,
-        colors=plt.cm.Paired(range(len(job_count)))
-    )
+    ax.pie(job_count, labels=job_count.index, autopct=lambda pct: format_label(pct, job_count.values), textprops={'color':'white'}, startangle=140, colors=plt.cm.Paired(range(len(job_count))))
+
     ax.set_title('Top 5 Most Common Positions in the DS Industry', color='white', fontsize=12)
     fig.patch.set_facecolor('#2C2C2C')
     ax.set_facecolor('#1E1E1E')
@@ -348,16 +345,20 @@ job_titles = [
     ('Data Scientists', show_data_scientists_analysis),
     ('Data Engineers', lambda: print("Data Engineers button pressed")),
     ('ML & AI Specialists', lambda: print("ML & AI Specialists button pressed")),
+    ('DS Management', lambda: print("DS Management button pressed")),
+    ('Research Roles', lambda: print("Research Roles button pressed")),
+    ('Miscellaneous', lambda: print("Miscellaneous button pressed"))
 ]
 
-for title in job_titles:
+for title, func in job_titles:
     title_button = ctk.CTkButton(
         job_titles_frame,
         text=title,
         width=180,
         height=40,
         fg_color='#2C2C2C',
-        command=lambda t=title: print(f"{t} button pressed")
+        command=func,
+        font=('Helvetica', 18, 'bold')
     )
     title_button.pack(pady=5)
 
@@ -374,6 +375,13 @@ about_button.grid(row=4, column=0, pady=5)
 
 bottom_spacer = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
 bottom_spacer.grid(row=5, column=0, sticky='ew')
+
+def clear_main_frame():
+    for widget in main_frame.winfo_children():
+        widget.destroy()
+
+
+
 
 # Run
 root.mainloop()
