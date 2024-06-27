@@ -153,6 +153,21 @@ def update_plot1_with_experience_salary():
 
 def update_plot1_with_job_locations():
     job_location = data['company_location'].value_counts().head(10)
+    country_mapping = {
+        'IN': 'India',
+        'ES': 'Spain',
+        'CA': 'Canada',
+        'GB': 'United Kingdom',
+        'IT': 'Italy',
+        'FR': 'France',
+        'DE': 'Germany',
+        'NL': 'Netherlands',
+        'AU': 'Australia',
+        'BR': 'Brazil',
+    }
+    data_outside_us = data[data['company_location']!='US']
+    job_location = data_outside_us['company_location'].value_counts().head(10)
+    job_location.index = job_location.index.map(lambda x:country_mapping.get(x,'Other'))
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.barh(job_location.index, job_location.values, color='#5bc0de')
     style_plot(fig, ax, 'Top 10 Job Locations', 'Number of Job Titles')
