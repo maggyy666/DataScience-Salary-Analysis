@@ -4,8 +4,9 @@ from plot_generator import (
     update_plot1_with_job_titles, update_plot1_with_experience_salary,
     update_plot1_with_job_locations, update_plot2_with_common_positions,
     update_plot2_with_country_distribution, update_plot2_with_experience_distribution,
-    update_plot2_with_company_size_distribution, update_plot_with_data_scientists
+    update_plot2_with_company_size_distribution, update_plot_with_category
 )
+
 current_section = 'home'
 current_plot_type = 'bar'
 current_data_set = 'Average Salary'
@@ -15,7 +16,7 @@ tile2 = None
 root = ctk.CTk()
 root.geometry('1800x800')
 ctk.set_appearance_mode('system')
-ctk.set_default_color_theme('blue')
+ctk.set_default_color_theme('green')
 
 root.configure(bg='#1E1E1E')
 
@@ -39,27 +40,14 @@ navbar.grid_columnconfigure(10, weight=1)
 navbar_label = ctk.CTkLabel(navbar, text="DS Salary Analysis App", fg_color='#333333', font=('Helvetica', 16, 'bold'))
 navbar_label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
-
 def update_plot():
-    if current_section == 'Data Scientists':
-        update_plot_with_data_scientists(tile1, current_plot_type, current_data_set)
+    if current_section == 'home':
+        update_plot1_with_job_titles(tile1)
+        update_plot2_with_common_positions(tile2)
     else:
-        if current_data_set == 'Average Salary':
-            update_plot1_with_job_titles(tile1)
-        elif current_data_set == 'Salary by Experience':
-            update_plot1_with_experience_salary(tile1)
-        elif current_data_set == 'Jobs by Location':
-            update_plot1_with_job_locations(tile1)
-        elif current_data_set == 'Country Distribution':
-            update_plot2_with_country_distribution(tile2)
-        elif current_data_set == 'Experience Distribution':
-            update_plot2_with_experience_distribution(tile2)
-        elif current_data_set == 'Company Size Distribution':
-            update_plot2_with_company_size_distribution(tile2)
+        update_plot_with_category(tile1, current_plot_type, current_section, current_data_set)
 
-
-
-#Func for buttons for jobs xd
+# Function for creating job buttons
 def create_job_buttons():
     global job_button_frame
     job_button_frame = ctk.CTkFrame(navbar, fg_color='#333333')
@@ -74,19 +62,11 @@ def create_job_buttons():
     job_location_button = ctk.CTkButton(job_button_frame, text='Jobs by Location', command=lambda: switch_job_data_set('Jobs by Location'))
     job_location_button.grid(row=0, column=3, padx=10, pady=5)
 
-    country_distribution_button = ctk.CTkButton(job_button_frame, text='Country Distribution', command=switch_to_country_distribution)
-    country_distribution_button.grid(row=0, column=5, padx=10, pady=5)
-
     experience_distribution_button = ctk.CTkButton(job_button_frame, text='Experience Distribution', command=switch_to_experience_distribution)
     experience_distribution_button.grid(row=0, column=6, padx=10, pady=5)
 
     company_size_distribution_button = ctk.CTkButton(job_button_frame, text='Company Size Distribution', command=switch_to_company_size_distribution)
     company_size_distribution_button.grid(row=0, column=7, padx=10, pady=5)
-
-
-
-
-
 
 def show_job_buttons():
     home_button.grid_remove()
@@ -99,44 +79,62 @@ def switch_job_data_set(data_set):
     current_data_set = data_set
     update_plot()
 
-
-
-# FUNC for BAR CHART BUTTONS
+# Functions for switching sections
 def switch_to_home():
     global current_section, current_data_set
-    current_section = 'Home'
-    current_data_Set = 'Average Salary'
+    current_section = 'home'
+    current_data_set = 'Average Salary'
     update_plot1_with_job_titles(tile1)
     update_plot2_with_common_positions(tile2)
     current_section_label.configure(text='Home')
 
+def switch_to_home_avg_salary():
+    global current_data_set
+    current_data_set = 'Average Salary'
+    update_plot1_with_job_titles(tile1)
+
+def switch_to_home_experience_salary():
+    global current_data_set
+    current_data_set = 'Salary by Experience'
+    update_plot1_with_experience_salary(tile1)
+
+def switch_to_home_job_location():
+    global current_data_set
+    current_data_set = 'Jobs by Location'
+    update_plot1_with_job_locations(tile1)
+
+def switch_to_home_country_distribution():
+    global current_data_set
+    current_data_set = 'Country Distribution'
+    update_plot2_with_country_distribution(tile2)
+
+def switch_to_home_experience_distribution():
+    global current_data_set
+    current_data_set = 'Experience Distribution'
+    update_plot2_with_experience_distribution(tile2)
+
+def switch_to_home_company_size_distribution():
+    global current_data_set
+    current_data_set = 'Company Size Distribution'
+    update_plot2_with_company_size_distribution(tile2)
+
+
+
 def switch_to_experience_salary():
     global current_data_set
     current_data_set = 'Salary by Experience'
-    if current_section == 'Data Scientists':
-        update_plot()
-    else:
-        update_plot1_with_experience_salary(tile1)
+    update_plot()
 
 def switch_to_job_location():
     global current_data_set
     current_data_set = 'Jobs by Location'
-    if current_section == 'Data Scientists':
-        update_plot()
-    else:
-        update_plot1_with_job_locations(tile1)
+    update_plot()
 
 def switch_to_job_titles():
     global current_data_set
     current_data_set = 'Average Salary'
-    if current_section == 'Data Scientists':
-        update_plot()
-    else:
-        update_plot1_with_job_titles(tile1)
+    update_plot()
 
-
-
-# Func for PIE CHART BUTTONS
 def switch_to_country_distribution():
     global current_data_set
     current_data_set = 'Country Distribution'
@@ -167,15 +165,14 @@ current_section_label = ctk.CTkLabel(navbar, text='Home', fg_color='#333333', fo
 current_section_label.grid(row=0, column=5, padx=60, pady=10, sticky='w')
 
 # BAR CHART BUTTONS
-home_button = ctk.CTkButton(navbar, text='Average Salary', command=switch_to_job_titles)
+home_button = ctk.CTkButton(navbar, text='Average Salary', command=switch_to_home_avg_salary)
 home_button.grid(row=0, column=1, padx=10, pady=5)
 
-experience_salary_button = ctk.CTkButton(navbar, text='Salary by Experience', command=switch_to_experience_salary)
+experience_salary_button = ctk.CTkButton(navbar, text='Salary by Experience', command=switch_to_home_experience_salary)
 experience_salary_button.grid(row=0, column=2, padx=10, pady=5)
 
-job_location_button = ctk.CTkButton(navbar, text='Jobs by Location', command=switch_to_job_location)
+job_location_button = ctk.CTkButton(navbar, text='Jobs by Location', command=switch_to_home_job_location)
 job_location_button.grid(row=0, column=3, padx=10, pady=5)
-
 # Sidebar
 side_frame = ctk.CTkFrame(root, width=200, height=200, corner_radius=0, fg_color='#2C2C2C')
 side_frame.grid(row=1, column=0, sticky='ns')
@@ -214,11 +211,11 @@ def clear_main_frame():
     for widget in main_frame.winfo_children():
         widget.destroy()
 
-def show_data_scientists_analysis():
+def show_category_analysis(category):
     clear_main_frame()
-    current_section_label.configure(text='Data Scientists')
+    current_section_label.configure(text=category)
     global current_section
-    current_section = 'Data Scientists'
+    current_section = category
 
     main_frame.grid_columnconfigure(0, weight=1)
     main_frame.grid_columnconfigure(1, weight=1)
@@ -253,12 +250,8 @@ def show_data_scientists_analysis():
     box_plot_button.pack(side=LEFT, padx=10)
 
     # Default plot
-    update_plot_with_data_scientists(tile1, 'bar')
+    update_plot_with_category(tile1, 'bar', category, current_data_set)
     show_job_buttons()
-
-
-
-
 
 def switch_plot_type(plot_type):
     global current_plot_type
@@ -269,6 +262,7 @@ def switch_data_set(data_set):
     global current_data_set
     current_data_set = data_set
     update_plot()
+
 def toggle_job_titles():
     if job_titles_frame.winfo_ismapped():
         job_titles_frame.grid_remove()
@@ -291,13 +285,18 @@ job_titles_frame.grid(row=3, column=0, sticky='ew', padx=5, pady=5)
 job_titles_frame.grid_remove()
 
 job_titles = [
-    ('Data Scientists', show_data_scientists_analysis),
-    ('Data Engineers', lambda: print("Data Engineers button pressed")),
-    ('ML & AI Specialists', lambda: print("ML & AI Specialists button pressed")),
-    ('DS Management', lambda: print("DS Management button pressed")),
-    ('Research Roles', lambda: print("Research Roles button pressed")),
-    ('Miscellaneous', lambda: print("Miscellaneous button pressed"))
+    ('Data Scientists', lambda: show_category_analysis('Data Scientists')),
+    ('Data Engineers', lambda: show_category_analysis('Data Engineers')),
+    ('ML Engineers', lambda: show_category_analysis('ML Engineers')),
+    ('AI Specialists', lambda: show_category_analysis('AI Specialists')),
+    ('DS Management', lambda: show_category_analysis('DS Management')),
+    ('Research Roles', lambda: show_category_analysis('Research Roles')),
+    ('Business Intelligence', lambda: show_category_analysis('Business Intelligence')),
+    ('Specialized Analysts', lambda: show_category_analysis('Specialized Analysts')),
+    ('Architects', lambda: show_category_analysis('Architects')),
+    ('Miscellaneous', lambda: show_category_analysis('Miscellaneous'))
 ]
+
 
 for title, func in job_titles:
     title_button = ctk.CTkButton(
