@@ -37,32 +37,22 @@ job_categories = {
                       'Principal Data Analyst', 'Finance Data Analyst']
 }
 
-    def update_plot(self, tile, plot_type, data_set):
-        data = self.filter_data(load_data())
-        fig, ax = plt.subplots(figsize=(18, 6))
 
-        if data_set == 'Average Salary':
-            self.plot_average_salary(ax, data, plot_type)
-        elif data_set == 'Salary by Experience':
-            self.plot_salary_by_experience(ax, data, plot_type)
-        elif data_set == 'Jobs by Location':
-            self.plot_jobs_by_location(ax, data, plot_type)
-        elif data_set == 'Country Distribution':
-            self.plot_country_distribution(ax, data, plot_type)
-        elif data_set == 'Experience Distribution':
-            self.plot_experience_distribution(ax, data, plot_type)
-        elif data_set == 'Company Size Distribution':
-            self.plot_company_size_distribution(ax, data, plot_type)
+class JobCategoryPlot:
+    def __init__(self, tile, category):
+        self.tile = tile
+        self.category = category
+        self.data = load_data()
+        self.filtered_data = self.data[self.data['job_title'].isin(job_categories[self.category])]
 
-        plot_on_tile(fig, tile)
+    def plot_common_positions(self, plot_type):
+        job_count = self.filtered_data['job_title'].value_counts().head(5)
+        fig, ax = plt.subplots()
 
-    def plot_average_salary(self, ax, data, plot_type):
-        salary_per_country = data.groupby('company_location')['salary_in_usd'].mean().sort_values()
         if plot_type == 'bar':
-            ax.barh(salary_per_country.index, salary_per_country.values, color='#5bc0de')
-            style_plot(ax.figure, ax, 'Average Salary by Country', 'Average Salary in USD')
+            ax.barh(job_count.index, job_count.values, color='#5bc0de')
+            style_plot(fig, ax, 'Top 5 Most Common Positions in the DS Industry', 'Count')
         elif plot_type == 'pie':
-            salary_per_country = salary_per_country.head(10)
             ax.pie(job_count, labels=job_count.index, autopct=lambda pct: format_label(pct, job_count.values), textprops={'color': 'white'}, startangle=140, colors=plt.cm.Paired(range(len(job_count))))
             ax.set_title('Top 5 Most Common Positions in the DS Industry', color='white', fontsize=12)
             fig.patch.set_facecolor('#2C2C2C')
@@ -149,4 +139,70 @@ job_categories = {
             ax.set_facecolor('#1E1E1E')
             ax.tick_params(axis='x', colors='white')
             ax.tick_params(axis='y', colors='white')
+        plot_on_tile(fig, self.tile)
+
+        def plot_experience_distribution(self, plot_type):
+            experience_distribution = self.data['experience_level'].value_counts()
+            experience_distribution.index = experience_distribution.index.map(experience_level_mapping)
+            fig, ax = plt.subplots(figsize=(18, 6))
+            if plot_type == 'bar':
+                ax.barh(experience_distribution.index, experience_distribution.values, color='#5bc0de')
+                style_plot(fig, ax, f'Experience Distribution for {self.category}', 'Count')
+            elif plot_type == 'pie':
+                ax.pie(experience_distribution, labels=experience_distribution.index, autopct='%1.1f%%',
+                       colors=plt.cm.Paired(range(len(experience_distribution))), textprops={'color': 'white'})
+                ax.set_title(f'Experience Distribution for {self.category}', color='white', fontsize=12)
+                fig.patch.set_facecolor('#2C2C2C')
+                ax.set_facecolor('#1E1E1E')
+            elif plot_type == 'box':
+                self.data.boxplot(column='salary_in_usd', by='experience_level', ax=ax)
+                ax.set_title(f'Salary Distribution by Experience Level for {self.category}', color='white', fontsize=12)
+                ax.set_xlabel('Experience Level', color='white')
+                ax.set_ylabel('Salary in USD', color='white')
+                fig.suptitle('')
+                fig.patch.set_facecolor('#2C2C2C')
+                ax.set_facecolor('#1E1E1E')
+                ax.tick_params(axis='x', colors='white')
+                ax.tick_params(axis='y', colors='white')
+            plot_on_tile(fig, self.tile)
+
+        def plot_company_size_distribution(self, plot_type):
+            company_size_distribution = self.data['company_size'].value_counts()
+            company_size_distribution.index = company_size_distribution.index.map(company_size_mapping)
+            fig, ax = plt.subplots(figsize=(18, 6))
+            if plot_type == 'bar':
+                ax.barh(company_size_distribution.index, company_size_distribution.values, color='#5bc0de')
+                style_plot(fig, ax, f'Company Size Distribution for {self.category}', 'Count')
+            elif plot_type == 'pie':
+                ax.pie(company_size_distribution, labels=company_size_distribution.index, autopct='%1.1f%%',
+                       colors=plt.cm.Paired(range(len(company_size_distribution))), textprops={'color': 'white'})
+                ax.set_title(f'Company Size Distribution for {self.category}', color='white', fontsize=12)
+                fig.patch.set_facecolor('#2C2C2C')
+                ax.set_facecolor('#1E1E1E')
+            elif plot_type == 'box':
+                self.data.boxplot(column='salary_in_usd', by='company_size', ax=ax)
+                ax.set_title(f'Salary Distribution by Company Size for {self.category}', color='white', fontsize=12)
+                ax.set_xlabel('Company Size', color='white')
+                ax.set_ylabel('Salary in USD', color='white')
+                fig.suptitle('')
+                fig.patch.set_facecolor('#2C2C2C')
+                ax.set_facecolor('#1E1E1E')
+                ax.tick_params(axis='x', colors='white')
+                ax.tick_params(axis='y', colors='white')
+            plot_on_tile(fig, self.tile)
+
+        def plot_common_positions(self, plot_type):
+            job_count = self.data['job_title'].value_counts().head(5)
+            fig, ax = plt.subplots(figsize=(18, 6))
+            if plot_type == 'bar':
+                ax.barh(job_count.index, job_count.values, color='#5bc0de')
+                style_plot(fig, ax, f'Top 5 Most Common Positions in {self.category}', 'Count')
+            elif plot_type == 'pie':
+                ax.pie(job_count, labels=job_count.index, autopct=lambda pct: format_label(pct, job_count.values),
+                       textprops={'color': 'white'}, startangle=140, colors=plt.cm.Paired(range(len(job_count))))
+                ax.set_title(f'Top 5 Most Common Positions in {self.category}', color='white', fontsize=12)
+                fig.patch.set_facecolor('#2C2C2C')
+                ax.set_facecolor('#1E1E1E')
+                plt.gca().set_aspect('equal')
+            plot_on_tile(fig, self.tile)
 
