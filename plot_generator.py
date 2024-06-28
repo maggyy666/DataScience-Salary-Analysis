@@ -154,135 +154,130 @@ def update_plot_with_category(tile, plot_type, category, data_set='Average Salar
         category_data = data[data['job_title'].isin(job_categories[category])].copy()
     else:
         category_data = data.copy()
+    fig, ax = plt.subplots(figsize=(18, 7))
 
     if data_set == 'Average Salary':
         if plot_type == 'bar':
-            salary_per_country = data_scientists_data.groupby('company_location')['salary_in_usd'].mean().sort_values()
-            ax.barh(salary_per_country.index, salary_per_country.values, color='#5bc0de')
-            style_plot(fig, ax, 'Average Salary for Data Scientists by Country', 'Average Salary in USD')
+            salary_per_country = category_data.groupby('company_location')['salary_in_usd'].mean().sort_values()
+            ax.barh(salary_per_country.index.map(map_country_names), salary_per_country.values, color='#5bc0de')
+            style_plot(fig, ax, f'Average Salary for {category} by Country', 'Average Salary in USD')
         elif plot_type == 'pie':
-            salary_per_country = data_scientists_data.groupby('company_location')['salary_in_usd'].mean().sort_values().head(10)
-            ax.pie(salary_per_country, labels=salary_per_country.index, autopct='%1.1f%%', colors=plt.cm.Paired(range(len(salary_per_country))), textprops={'color': 'white'})
-            ax.set_title('Top 10 Average Salary for Data Scientists by Country', color='white', fontsize=12)
+            salary_per_country = category_data.groupby('company_location')['salary_in_usd'].mean().sort_values().head(10)
+            ax.pie(salary_per_country, labels=salary_per_country.index.map(map_country_names), autopct='%1.1f%%', colors=plt.cm.Paired(range(len(salary_per_country))), textprops={'color': 'white'})
+            ax.set_title(f'Top 10 Average Salary for {category} by Country', color='white', fontsize=14, fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
-            specialties = ['Data Scientist', 'Applied Scientist', 'Applied Data Scientist', 'Business Data Analyst',
-                           'Staff Data Scientist', 'Lead Data Scientist', 'Product Data Scientist',
-                           'Principal Data Scientist', 'Data Scientist Lead']
-            data_filtered = data[data['job_title'].isin(specialties)]
-            data_filtered.boxplot(column='salary_in_usd', by='job_title', ax=ax)
-            ax.set_title('Average Salary for Data Scientist Specialties', color='white', fontsize=12)
-            ax.set_xlabel('Specialty', color='white')
-            ax.set_ylabel('Salary in USD', color='white')
+            data_filtered = category_data.copy()
+            data_filtered['country'] = data_filtered['company_location'].map(map_country_names)
+            data_filtered.boxplot(column='salary_in_usd', by='country', ax=ax)
+            ax.set_title(f'Average Salary for {category} Specialties', color='white', fontsize=14, fontweight='bold')
+            ax.set_xlabel('Specialty', color='white', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
             fig.suptitle('')
             fig.patch.set_facecolor('#2C2C2C')
-            ax.set_facecolor('#1E1E1E')
-            ax.tick_params(axis='x', colors='white')
-            ax.tick_params(axis='y', colors='white')
+            style_box_plot(ax)
     elif data_set == 'Salary by Experience':
-        experience_salary = data_scientists_data.groupby('experience_level')['salary_in_usd'].mean().sort_values()
+        experience_salary = category_data.groupby('experience_level')['salary_in_usd'].mean().sort_values()
         experience_salary.index = experience_salary.index.map(experience_level_mapping)
         if plot_type == 'bar':
             ax.barh(experience_salary.index, experience_salary.values, color='#5bc0de')
-            style_plot(fig, ax, 'Average Salary by Experience Level for Data Scientists', 'Average Salary in USD')
+            style_plot(fig, ax, f'Average Salary by Experience Level for {category}', 'Average Salary in USD')
         elif plot_type == 'pie':
             ax.pie(experience_salary, labels=experience_salary.index, autopct='%1.1f%%', colors=plt.cm.Paired(range(len(experience_salary))), textprops={'color': 'white'})
-            ax.set_title('Salary by Experience Level for Data Scientists', color='white', fontsize=12)
+            ax.set_title(f'Salary by Experience Level for {category}', color='white', fontsize=14, fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
-            data_scientists_data.boxplot(column='salary_in_usd', by='experience_level', ax=ax)
-            ax.set_title('Salary Distribution by Experience Level')
-            ax.set_xlabel('Experience Level')
-            ax.set_ylabel('Salary in USD')
+            category_data.loc[:, 'experience_level'] = category_data['experience_level'].map(experience_level_mapping)
+            category_data.boxplot(column='salary_in_usd', by='experience_level', ax=ax)
+            ax.set_title(f'Salary Distribution by Experience Level for {category}', color='white', fontsize=14, fontweight='bold')
+            ax.set_xlabel('Experience Level', color='white', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
             fig.suptitle('')
+            fig.patch.set_facecolor('#2C2C2C')
+            style_box_plot(ax)
     elif data_set == 'Jobs by Location':
-        country_distribution = data_scientists_data['company_location'].value_counts().head(10)
-        country_distribution.index = country_distribution.index.map(country_names_mapping)
+        country_distribution = category_data['company_location'].value_counts().head(10)
+        country_distribution.index = country_distribution.index.map(map_country_names)
         if plot_type == 'bar':
             ax.barh(country_distribution.index, country_distribution.values, color='#5bc0de')
-            style_plot(fig, ax, 'Top Job Locations for Data Scientists', 'Number of Jobs')
+            style_plot(fig, ax, f'Top Job Locations for {category}', 'Number of Jobs')
         elif plot_type == 'pie':
             ax.pie(country_distribution, labels=country_distribution.index, autopct='%1.1f%%', colors=plt.cm.Paired(range(len(country_distribution))), textprops={'color': 'white'})
-            ax.set_title('Top Job Locations for Data Scientists', color='white', fontsize=12)
+            ax.set_title(f'Top Job Locations for {category}', color='white', fontsize=14, fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
-            data_scientists_data.boxplot(column='salary_in_usd', by='company_location', ax=ax)
-            ax.set_title('Salary Distribution by Location')
-            ax.set_xlabel('Location')
-            ax.set_ylabel('Salary in USD')
+            data_filtered = category_data.copy()
+            data_filtered['country'] = data_filtered['company_location'].map(map_country_names)
+            data_filtered.boxplot(column='salary_in_usd', by='country', ax=ax)
+            ax.set_title(f'Salary Distribution by Location for {category}', color='white', fontsize=14, fontweight='bold')
+            ax.set_xlabel('Location', color='white', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
             fig.suptitle('')
+            fig.patch.set_facecolor('#2C2C2C')
+            style_box_plot(ax)
     elif data_set == 'Country Distribution':
-        country_distribution = data_scientists_data['company_location'].value_counts().head(10)
+        country_distribution = category_data['company_location'].value_counts().head(10)
         if plot_type == 'bar':
-            ax.barh(country_distribution.index, country_distribution.values, color='#5bc0de')
-            style_plot(fig, ax, 'Country Distribution for Data Scientists', 'Count')
+            ax.barh(country_distribution.index.map(map_country_names), country_distribution.values, color='#5bc0de')
+            style_plot(fig, ax, f'Country Distribution for {category}', 'Count')
         elif plot_type == 'pie':
-            ax.pie(country_distribution, labels=country_distribution.index, autopct='%1.1f%%', colors=plt.cm.Paired(range(len(country_distribution))), textprops={'color': 'white'})
-            ax.set_title('Top 10 Country Distribution for Data Scientists', color='white', fontsize=12)
+            ax.pie(country_distribution, labels=country_distribution.index.map(map_country_names), autopct='%1.1f%%', colors=plt.cm.Paired(range(len(country_distribution))), textprops={'color': 'white'})
+            ax.set_title(f'Top 10 Country Distribution for {category}', color='white', fontsize=14, fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
-            data_scientists_data.boxplot(column='salary_in_usd', by='company_location', ax=ax)
-            ax.set_title('Salary Distribution by Country')
-            ax.set_xlabel('Country')
-            ax.set_ylabel('Salary in USD')
+            data_filtered = category_data.copy()
+            data_filtered['country'] = data_filtered['company_location'].map(map_country_names)
+            data_filtered.boxplot(column='salary_in_usd', by='country', ax=ax)
+            ax.set_title(f'Salary Distribution by Country for {category}', color='white', fontsize=14, fontweight='bold')
+            ax.set_xlabel('Country', color='white', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
             fig.suptitle('')
+            fig.patch.set_facecolor('#2C2C2C')
+            style_box_plot(ax)
     elif data_set == 'Experience Distribution':
-        experience_distribution = data_scientists_data['experience_level'].value_counts()
+        experience_distribution = category_data['experience_level'].value_counts()
         experience_distribution.index = experience_distribution.index.map(experience_level_mapping)
         if plot_type == 'bar':
             ax.barh(experience_distribution.index, experience_distribution.values, color='#5bc0de')
-            style_plot(fig, ax, 'Experience Distribution for Data Scientists', 'Count')
+            style_plot(fig, ax, f'Experience Distribution for {category}', 'Count')
         elif plot_type == 'pie':
             ax.pie(experience_distribution, labels=experience_distribution.index, autopct='%1.1f%%', colors=plt.cm.Paired(range(len(experience_distribution))), textprops={'color': 'white'})
-            ax.set_title('Experience Distribution for Data Scientists', color='white', fontsize=12)
+            ax.set_title(f'Experience Distribution for {category}', color='white', fontsize=14, fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
-            data_scientists_data.boxplot(column='salary_in_usd', by='experience_level', ax=ax)
-            ax.set_title('Salary Distribution by Experience Level')
-            ax.set_xlabel('Experience Level')
-            ax.set_ylabel('Salary in USD')
+            category_data.loc[:, 'experience_level'] = category_data['experience_level'].map(experience_level_mapping)
+            category_data.boxplot(column='salary_in_usd', by='experience_level', ax=ax)
+            ax.set_title(f'Salary Distribution by Experience Level for {category}', color='white', fontsize=14, fontweight='bold')
+            ax.set_xlabel('Experience Level', color='white', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
             fig.suptitle('')
+            fig.patch.set_facecolor('#2C2C2C')
+            style_box_plot(ax)
     elif data_set == 'Company Size Distribution':
-        company_size_distribution = data_scientists_data['company_size'].value_counts()
+        company_size_distribution = category_data['company_size'].value_counts()
         company_size_distribution.index = company_size_distribution.index.map(company_size_mapping)
         if plot_type == 'bar':
             ax.barh(company_size_distribution.index, company_size_distribution.values, color='#5bc0de')
-            style_plot(fig, ax, 'Company Size Distribution for Data Scientists', 'Count')
+            style_plot(fig, ax, f'Company Size Distribution for {category}', 'Count')
         elif plot_type == 'pie':
             ax.pie(company_size_distribution, labels=company_size_distribution.index, autopct='%1.1f%%', colors=plt.cm.Paired(range(len(company_size_distribution))), textprops={'color': 'white'})
-            ax.set_title('Company Size Distribution for Data Scientists', color='white', fontsize=12)
+            ax.set_title(f'Company Size Distribution for {category}', color='white', fontsize=14, fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
-            data_scientists_data.boxplot(column='salary_in_usd', by='company_size', ax=ax)
-            ax.set_title('Salary Distribution by Company Size')
-            ax.set_xlabel('Company Size')
-            ax.set_ylabel('Salary in USD')
+            category_data.loc[:, 'company_size'] = category_data['company_size'].map(company_size_mapping)
+            category_data.boxplot(column='salary_in_usd', by='company_size', ax=ax)
+            ax.set_title(f'Salary Distribution by Company Size for {category}', color='white', fontsize=14, fontweight='bold')
+            ax.set_xlabel('Company Size', color='white', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
             fig.suptitle('')
+            fig.patch.set_facecolor('#2C2C2C')
+            style_box_plot(ax)
 
     plot_on_tile(fig, tile)
-
-
-
-
-
-
-def update_plot_with_category(tile, category):
-    data = load_data()
-    if category in job_categories:
-        filtered_data = data[data['job_title'].isin(job_categories[category])]
-    else:
-        filtered_data = data
-
-    fig, ax = plt.subplots()
-
-    salary_per_country = filtered_data.groupby('company_location')['salary_in_usd'].mean().sort_values()
-    ax.barh(salary_per_country.index, salary_per_country.values, color='#5bc0de')
-    style_plot(fig, ax, f'Average Salary for {category}', 'Average Salary in USD')
-
-    plot_on_tile(fig, tile)
+    plt.close(fig)
