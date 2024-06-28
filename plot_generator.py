@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from utils import style_plot, plot_on_tile, load_data, experience_level_mapping, country_names_mapping, company_size_mapping, format_label
-
+from utils import style_plot, plot_on_tile, load_data, experience_level_mapping, country_names_mapping, company_size_mapping, format_label, job_categories
 
 job_categories = {
     'Data Scientists': ['Data Scientist', 'Applied Scientist', 'Applied Data Scientist', 'Business Data Analyst', 'Staff Data Scientist', 'Lead Data Scientist', 'Product Data Scientist', 'Principal Data Scientist', 'Data Scientist Lead'],
@@ -15,16 +14,42 @@ job_categories = {
     'Architects': ['Data Architect', 'Principal Data Architect', 'Big Data Architect', 'Cloud Data Architect'],
     'Miscellaneous': ['Data Strategist', 'Data Specialist', 'Lead Data Analyst', 'MLOps Engineer', 'Data Operations Engineer', 'Data Science Consultant', 'Data Analytics Specialist', 'Machine Learning Infrastructure Engineer', 'Data Analytics Lead', 'Data Lead', 'Data Science Engineer', 'Manager Data Management', 'Data Analytics Engineer', 'Data Analytics Consultant', 'Data Management Specialist', 'Data Operations Analyst', 'Principal Data Analyst', 'Finance Data Analyst']
 }
-
-def update_plot1_with_job_titles(tile):
+country_names_mapping = {
+    'IN': 'India',
+    'ES': 'Spain',
+    'CA': 'Canada',
+    'GB': 'United Kingdom',
+    'IT': 'Italy',
+    'FR': 'France',
+    'DE': 'Germany',
+    'NL': 'Netherlands',
+    'AU': 'Australia',
+    'BR': 'Brazil',
+    'US': 'United States',
+    'CN': 'China',
+    'JP': 'Japan',
+    'KR': 'South Korea',
+    'RU': 'Russia',
+    'MX': 'Mexico',
+    'AR': 'Argentina',
+    'ZA': 'South Africa',
+    'NG': 'Nigeria'
+}
+def map_country_names(country_code):
+    return country_names_mapping.get(country_code, 'Other')
+def update_plot1_with_job_titles(tile, category=None):
     data = load_data()
+    if category and category in job_categories:
+        data = data[data['job_title'].isin(job_categories[category])]
     salary_per_title = data.groupby('job_title')['salary_in_usd'].mean().sort_values(ascending=False)
     selected_jobs = pd.concat([salary_per_title.head(3), salary_per_title.tail(3), salary_per_title[3:-3].sample(4)]).reset_index()
     selected_jobs = selected_jobs.sort_values(by='salary_in_usd').reset_index(drop=True)
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.barh(selected_jobs['job_title'], selected_jobs['salary_in_usd'], height=0.8, color='#5bc0de')
-    style_plot(fig, ax, 'Average Salary per Job in Data Science', 'Average Salary in USD')
+    style_plot(fig, ax, f'Average Salary per Job in {category if category else "Data Science"}', 'Average Salary in USD')
     plot_on_tile(fig, tile)
+def format_job_title(title):
+    return "\n".join(title.split())
 
 def update_plot1_with_experience_salary(tile):
     data = load_data()
@@ -104,10 +129,31 @@ def update_plot2_with_company_size_distribution(tile):
     plt.gca().set_aspect('equal')
     plot_on_tile(fig, tile)
 
-def update_plot_with_data_scientists(tile, plot_type, data_set='Average Salary'):
+
+def style_box_plot(ax):
+    ax.set_facecolor('#1E1E1E')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+    for spine in ax.spines.values():
+        spine.set_edgecolor('white')
+
+    for label in (ax.get_xticklabels() + ax.get_yticklabels()):
+        label.set_color('white')
+
+    # Set titles with larger font size and bold weight
+    ax.title.set_fontsize(14)
+    ax.title.set_fontweight('bold')
+    ax.xaxis.label.set_fontsize(12)
+    ax.xaxis.label.set_fontweight('bold')
+    ax.yaxis.label.set_fontsize(12)
+    ax.yaxis.label.set_fontweight('bold')
+
+def update_plot_with_category(tile, plot_type, category, data_set='Average Salary'):
     data = load_data()
-    data_scientists_data = data[data['job_title'].str.contains('Data Scientist')]
-    fig, ax = plt.subplots(figsize=(18, 6))
+    if category in job_categories:
+        category_data = data[data['job_title'].isin(job_categories[category])].copy()
+    else:
+        category_data = data.copy()
 
     if data_set == 'Average Salary':
         if plot_type == 'bar':
