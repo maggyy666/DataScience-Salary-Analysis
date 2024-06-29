@@ -53,6 +53,15 @@ def create_job_buttons():
     job_button_frame = ctk.CTkFrame(navbar, fg_color='#333333')
     job_button_frame.grid(row=1, column=0, columnspan=11, sticky='ew')
 
+    # Configure columns for centering buttons
+    job_button_frame.grid_columnconfigure(0, weight=1)
+    job_button_frame.grid_columnconfigure(1, weight=0)
+    job_button_frame.grid_columnconfigure(2, weight=0)
+    job_button_frame.grid_columnconfigure(3, weight=0)
+    job_button_frame.grid_columnconfigure(4, weight=0)
+    job_button_frame.grid_columnconfigure(5, weight=0)
+    job_button_frame.grid_columnconfigure(6, weight=1)
+
     avg_salary_button = ctk.CTkButton(job_button_frame, text='Average Salary', command=lambda: switch_job_data_set('Average Salary'))
     avg_salary_button.grid(row=0, column=1, padx=10, pady=5)
 
