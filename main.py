@@ -50,7 +50,7 @@ def update_plot():
 # FUNCTIONS @JOB_TITLE
 def create_job_buttons():
     global job_button_frame
-    job_button_frame = ctk.CTkFrame(navbar, fg_color='#333333')
+    job_button_frame = ctk.CTkFrame(navbar, fg_color='#2C2C2C')
     job_button_frame.grid(row=1, column=0, columnspan=11, sticky='ew')
 
     # Configure columns for centering buttons
@@ -291,7 +291,18 @@ def toggle_job_titles():
         job_titles_frame.grid_remove()
     else:
         job_titles_frame.grid()
+        about_button.grid(row=5 + len(job_titles), column=0, pady=5)
 
+home_button_sidebar = ctk.CTkButton(
+    side_frame,
+    text='Home',
+    width=180,
+    height=40,
+    fg_color='#2C2C2C',
+    command=switch_to_home,
+    font=('Helvetica', 18, 'bold')
+)
+home_button_sidebar.grid(row=1, column=0, pady=5)
 
 job_titles_button = ctk.CTkButton(
     side_frame,
@@ -322,7 +333,7 @@ job_titles = [
 ]
 
 
-for title, func in job_titles:
+for i, (title, func) in enumerate(job_titles):
     title_button = ctk.CTkButton(
         job_titles_frame,
         text=title,
@@ -332,7 +343,7 @@ for title, func in job_titles:
         command=func,
         font=('Helvetica', 13)
     )
-    title_button.pack(pady=5)
+    title_button.grid(row=i, column=0, pady=5)
 
 # About button
 about_button = ctk.CTkButton(
@@ -347,6 +358,10 @@ about_button.grid(row=4, column=0, pady=5)
 
 bottom_spacer = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
 bottom_spacer.grid(row=5, column=0, sticky='ew')
+
+# Center the sidebar buttons on the Y axis
+side_frame.grid_rowconfigure(0, weight=1)
+side_frame.grid_rowconfigure(6, weight=1)
 
 # Run
 root.mainloop()
