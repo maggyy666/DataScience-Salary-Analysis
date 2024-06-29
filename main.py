@@ -248,6 +248,13 @@ def show_category_analysis(category):
     button_frame = ctk.CTkFrame(main_frame, fg_color='#2C2C2C')
     button_frame.grid(row=2, column=2, columnspan=3, padx=(10, 5), pady=(10, 5), sticky='nsew')
 
+    # Center the button frame within its parent
+    button_frame.grid_columnconfigure(0, weight=1)
+    button_frame.grid_columnconfigure(1, weight=0)
+    button_frame.grid_columnconfigure(2, weight=0)
+    button_frame.grid_columnconfigure(3, weight=0)
+    button_frame.grid_columnconfigure(4, weight=1)
+
     # Buttons to switch between plot types
     bar_chart_button = ctk.CTkButton(button_frame, text='Bar Chart', command=lambda: switch_plot_type('bar'))
     bar_chart_button.pack(side=LEFT, padx=10)
