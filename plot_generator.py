@@ -45,6 +45,7 @@ def update_plot1_with_job_titles(tile, category=None):
     selected_jobs = pd.concat([salary_per_title.head(3), salary_per_title.tail(3), salary_per_title[3:-3].sample(4)]).reset_index()
     selected_jobs = selected_jobs.sort_values(by='salary_in_usd').reset_index(drop=True)
     fig, ax = plt.subplots(figsize=(8, 6))
+
     ax.barh(selected_jobs['job_title'], selected_jobs['salary_in_usd'], height=0.8, color='#5bc0de')
     style_plot(fig, ax, f'Average Salary per Job in {category if category else "Data Science"}', 'Average Salary in USD')
     plot_on_tile(fig, tile)
@@ -78,9 +79,14 @@ def update_plot1_with_job_locations(tile):
     job_location = data_outside_us['company_location'].value_counts().head(10)
     job_location.index = job_location.index.map(lambda x: country_mapping.get(x, 'Other'))
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.barh(job_location.index, job_location.values, color='#5bc0de')
-    style_plot(fig, ax, 'Top 10 Job Locations (Outside US)', 'Number of Job Titles')
+    bars = ax.barh(job_location.index, job_location.values, color='#888888')
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + 10, bar.get_y() + bar.get_height() / 2, f'{int(width)}', ha='left', va='center', color='white', fontweight='bold')  # Add +10 to width for better spacing
+    style_plot(fig, ax, 'Top 10 Job Locations (Outside US)', 'Number of Jobs')
     plot_on_tile(fig, tile)
+
+
 
 def update_plot2_with_common_positions(tile):
     data = load_data()
