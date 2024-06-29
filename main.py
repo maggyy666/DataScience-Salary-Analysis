@@ -47,7 +47,7 @@ def update_plot():
     else:
         update_plot_with_category(tile1, current_plot_type, current_section, current_data_set)
 
-# Function for creating job buttons
+# FUNCTIONS @JOB_TITLE
 def create_job_buttons():
     global job_button_frame
     job_button_frame = ctk.CTkFrame(navbar, fg_color='#333333')
@@ -72,10 +72,12 @@ def create_job_buttons():
     job_location_button.grid(row=0, column=3, padx=10, pady=5)
 
     experience_distribution_button = ctk.CTkButton(job_button_frame, text='Experience Distribution', command=switch_to_experience_distribution)
-    experience_distribution_button.grid(row=0, column=6, padx=10, pady=5)
+    experience_distribution_button.grid(row=0, column=4, padx=10, pady=5)
 
     company_size_distribution_button = ctk.CTkButton(job_button_frame, text='Company Size Distribution', command=switch_to_company_size_distribution)
-    company_size_distribution_button.grid(row=0, column=7, padx=10, pady=5)
+    company_size_distribution_button.grid(row=0, column=5, padx=10, pady=5)
+
+
 
 def show_job_buttons():
     home_button.grid_remove()
@@ -239,6 +241,10 @@ def show_category_analysis(category):
     main_frame.grid_rowconfigure(2, weight=1)
     main_frame.grid_rowconfigure(3, weight=1)
 
+    country_distribution_button.grid_remove()
+    experience_distribution_button.grid_remove()
+    company_size_distribution_button.grid_remove()
+
     # Frame for plot
     global tile1
     tile1 = ctk.CTkFrame(main_frame, fg_color='#2C2C2C')
@@ -257,17 +263,18 @@ def show_category_analysis(category):
 
     # Buttons to switch between plot types
     bar_chart_button = ctk.CTkButton(button_frame, text='Bar Chart', command=lambda: switch_plot_type('bar'))
-    bar_chart_button.pack(side=LEFT, padx=10)
+    bar_chart_button.grid(row=0, column=1, padx=10, pady=15)
 
     pie_chart_button = ctk.CTkButton(button_frame, text='Pie Chart', command=lambda: switch_plot_type('pie'))
-    pie_chart_button.pack(side=LEFT, padx=10)
+    pie_chart_button.grid(row=0, column=2, padx=10, pady=15)
 
     box_plot_button = ctk.CTkButton(button_frame, text='Box Plot', command=lambda: switch_plot_type('box'))
-    box_plot_button.pack(side=LEFT, padx=10)
+    box_plot_button.grid(row=0, column=3, padx=10, pady=15)
 
     # Default plot
     update_plot_with_category(tile1, 'bar', category, current_data_set)
     show_job_buttons()
+
 
 def switch_plot_type(plot_type):
     global current_plot_type
@@ -284,6 +291,7 @@ def toggle_job_titles():
         job_titles_frame.grid_remove()
     else:
         job_titles_frame.grid()
+
 
 job_titles_button = ctk.CTkButton(
     side_frame,
