@@ -66,7 +66,13 @@ country_names_mapping = {
     'MX': 'Mexico',
     'SE': 'Sweden',
 }
-
+employment_type_mapping = {
+    'CT': 'Contract',
+    'FL': 'Freelance',
+    'PT': 'Part-time',
+    'FT': 'Full-time',
+    'IN': 'Internship'
+}
 company_size_mapping = {
     'S': 'Small [<50]',
     'M': 'Medium [<249]',
