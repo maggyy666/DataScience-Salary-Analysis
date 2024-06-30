@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from utils import style_plot, plot_on_tile, load_data, experience_level_mapping, country_names_mapping, company_size_mapping, format_label, job_categories
+from utils import style_plot, plot_on_tile, load_data, experience_level_mapping, country_names_mapping, company_size_mapping, format_label, job_categories, employment_type_mapping
 
 job_categories = {
     'Data Scientists': ['Data Scientist', 'Applied Scientist', 'Applied Data Scientist', 'Business Data Analyst', 'Staff Data Scientist', 'Lead Data Scientist', 'Product Data Scientist', 'Principal Data Scientist', 'Data Scientist Lead'],
@@ -99,17 +99,30 @@ def update_plot2_with_common_positions(tile):
     plt.gca().set_aspect('equal')
     plot_on_tile(fig, tile)
 
-def update_plot2_with_country_distribution(tile):
+
+def update_plot2_with_employment_type_distribution(tile):
     data = load_data()
-    country_count = data[data['company_location'] != 'US']['company_location'].value_counts().head(10)
-    country_count.index = country_count.index.map(lambda x: country_names_mapping.get(x, 'Other'))
+    employment_type_count = data['employment_type'].value_counts()
+    employment_type_count = employment_type_count[employment_type_count.index != 'FT']  # Exclude 'FT'
+
+    employment_type_count.index = employment_type_count.index.map(employment_type_mapping)
+
     fig, ax = plt.subplots()
-    ax.pie(country_count, labels=country_count.index, autopct=lambda pct: format_label(pct, country_count.values), textprops={'color': 'white'}, startangle=140, colors=plt.cm.Paired(range(len(country_count))))
-    ax.set_title('Distribution by Company Country', color='white', fontsize=12)
+    patches, texts, autotexts = ax.pie(employment_type_count, labels=[f'{i+1}. {label}' for i, label in enumerate(employment_type_count.index)], autopct='%1.1f%%', colors=plt.cm.Paired(range(len(employment_type_count))), textprops={'color': 'white'}, startangle=140)
+    ax.set_title('Distribution by Employment Type', color='white', fontsize=12)
+
+    for text in texts + autotexts:
+        text.set_color('white')
+
     fig.patch.set_facecolor('#2C2C2C')
     ax.set_facecolor('#1E1E1E')
     plt.gca().set_aspect('equal')
+
     plot_on_tile(fig, tile)
+    plt.close(fig)
+
+
+
 
 def update_plot2_with_experience_distribution(tile):
     data = load_data()
@@ -271,15 +284,37 @@ def update_plot_with_category(tile, plot_type, category, data_set='Average Salar
             ax.barh(company_size_distribution.index, company_size_distribution.values, color='#5bc0de')
             style_plot(fig, ax, f'Company Size Distribution for {category}', 'Count')
         elif plot_type == 'pie':
-            ax.pie(company_size_distribution, labels=company_size_distribution.index, autopct='%1.1f%%', colors=plt.cm.Paired(range(len(company_size_distribution))), textprops={'color': 'white'})
+            ax.pie(company_size_distribution, labels=company_size_distribution.index, autopct='%1.1f%%',
+                   colors=plt.cm.Paired(range(len(company_size_distribution))), textprops={'color': 'white'})
             ax.set_title(f'Company Size Distribution for {category}', color='white', fontsize=14, fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
             category_data.loc[:, 'company_size'] = category_data['company_size'].map(company_size_mapping)
             category_data.boxplot(column='salary_in_usd', by='company_size', ax=ax)
-            ax.set_title(f'Salary Distribution by Company Size for {category}', color='white', fontsize=14, fontweight='bold')
+            ax.set_title(f'Salary Distribution by Company Size for {category}', color='white', fontsize=14,
+                         fontweight='bold')
             ax.set_xlabel('Company Size', color='white', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
+            fig.suptitle('')
+            fig.patch.set_facecolor('#2C2C2C')
+            style_box_plot(ax)
+    elif data_set == 'Employment Type Distribution':
+        employment_type_count = category_data['employment_type'].value_counts().head(10)
+        if plot_type == 'bar':
+            ax.barh(employment_type_count.index, employment_type_count.values, color='#5bc0de')
+            style_plot(fig, ax, f'Employment Type Distribution for {category}', 'Count')
+        elif plot_type == 'pie':
+            ax.pie(employment_type_count, labels=employment_type_count.index, autopct='%1.1f%%',
+                   colors=plt.cm.Paired(range(len(employment_type_count))), textprops={'color': 'white'})
+            ax.set_title(f'Employment Type Distribution for {category}', color='white', fontsize=14, fontweight='bold')
+            fig.patch.set_facecolor('#2C2C2C')
+            ax.set_facecolor('#1E1E1E')
+        elif plot_type == 'box':
+            category_data.boxplot(column='salary_in_usd', by='employment_type', ax=ax)
+            ax.set_title(f'Salary Distribution by Employment Type for {category}', color='white', fontsize=14,
+                         fontweight='bold')
+            ax.set_xlabel('Employment Type', color='white', fontsize=12, fontweight='bold')
             ax.set_ylabel('Salary in USD', color='white', fontsize=12, fontweight='bold')
             fig.suptitle('')
             fig.patch.set_facecolor('#2C2C2C')
