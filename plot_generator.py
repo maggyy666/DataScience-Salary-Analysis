@@ -2,39 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from utils import style_plot, plot_on_tile, load_data, experience_level_mapping, country_names_mapping, company_size_mapping, format_label, job_categories, employment_type_mapping
 
-job_categories = {
-    'Data Scientists': ['Data Scientist', 'Applied Scientist', 'Applied Data Scientist', 'Business Data Analyst', 'Staff Data Scientist', 'Lead Data Scientist', 'Product Data Scientist', 'Principal Data Scientist', 'Data Scientist Lead'],
-    'Data Engineers': ['Data Engineer', 'Data Modeler', 'Analytics Engineer', 'ETL Engineer', 'Data DevOps Engineer', 'BI Data Engineer', 'Data Infrastructure Engineer', 'Software Data Engineer', 'Cloud Database Engineer', 'Azure Data Engineer', 'Marketing Data Engineer', 'Cloud Data Engineer', 'Lead Data Engineer', 'Principal Data Engineer'],
-    'ML Engineers': ['ML Engineer', 'Machine Learning Engineer', 'Applied Machine Learning Engineer', 'Machine Learning Scientist', 'Deep Learning Engineer', 'Machine Learning Software Engineer', 'Machine Learning Research Engineer', 'NLP Engineer', 'Machine Learning Developer', 'Principal Machine Learning Engineer', 'Lead Machine Learning Engineer'],
-    'AI Specialists': ['AI Developer', 'AI Scientist', 'AI Programmer', 'Autonomous Vehicle Technician', 'Applied Machine Learning Scientist', 'Principal Machine Learning Engineer', 'Machine Learning Manager'],
-    'DS Management': ['Head of Data', 'Data Science Manager', 'Data Manager', 'Director of Data Science', 'Head of Data Science', 'Data Science Lead', 'Data Analytics Manager', 'Head of Machine Learning', 'Data Science Tech Lead'],
-    'Research Roles': ['Research Engineer', 'Research Scientist', 'Deep Learning Researcher', 'Machine Learning Researcher', '3D Computer Vision Researcher'],
-    'Business Intelligence': ['BI Data Engineer', 'BI Developer', 'BI Analyst', 'BI Data Analyst', 'Power BI Developer', 'Business Intelligence Engineer'],
-    'Specialized Analysts': ['Data Analyst', 'Data Quality Analyst', 'Compliance Data Analyst', 'Financial Data Analyst', 'Marketing Data Analyst', 'Insight Analyst', 'Product Data Analyst'],
-    'Architects': ['Data Architect', 'Principal Data Architect', 'Big Data Architect', 'Cloud Data Architect'],
-    'Miscellaneous': ['Data Strategist', 'Data Specialist', 'Lead Data Analyst', 'MLOps Engineer', 'Data Operations Engineer', 'Data Science Consultant', 'Data Analytics Specialist', 'Machine Learning Infrastructure Engineer', 'Data Analytics Lead', 'Data Lead', 'Data Science Engineer', 'Manager Data Management', 'Data Analytics Engineer', 'Data Analytics Consultant', 'Data Management Specialist', 'Data Operations Analyst', 'Principal Data Analyst', 'Finance Data Analyst']
-}
-country_names_mapping = {
-    'IN': 'India',
-    'ES': 'Spain',
-    'CA': 'Canada',
-    'GB': 'United Kingdom',
-    'IT': 'Italy',
-    'FR': 'France',
-    'DE': 'Germany',
-    'NL': 'Netherlands',
-    'AU': 'Australia',
-    'BR': 'Brazil',
-    'US': 'United States',
-    'CN': 'China',
-    'JP': 'Japan',
-    'KR': 'South Korea',
-    'RU': 'Russia',
-    'MX': 'Mexico',
-    'AR': 'Argentina',
-    'ZA': 'South Africa',
-    'NG': 'Nigeria'
-}
+
 def map_country_names(country_code):
     return country_names_mapping.get(country_code, 'Other')
 def update_plot1_with_job_titles(tile, category=None):
@@ -51,6 +19,9 @@ def update_plot1_with_job_titles(tile, category=None):
     plot_on_tile(fig, tile)
 def format_job_title(title):
     return "\n".join(title.split())
+def split_country_name(country_name):
+    return "\n".join(country_name.split())
+
 
 def update_plot1_with_experience_salary(tile):
     data = load_data()
@@ -63,21 +34,10 @@ def update_plot1_with_experience_salary(tile):
 
 def update_plot1_with_job_locations(tile):
     data = load_data()
-    country_mapping = {
-        'IN': 'India',
-        'ES': 'Spain',
-        'CA': 'Canada',
-        'GB': 'United Kingdom',
-        'IT': 'Italy',
-        'FR': 'France',
-        'DE': 'Germany',
-        'NL': 'Netherlands',
-        'AU': 'Australia',
-        'BR': 'Brazil',
-    }
+
     data_outside_us = data[data['company_location'] != 'US']
     job_location = data_outside_us['company_location'].value_counts().head(10)
-    job_location.index = job_location.index.map(lambda x: country_mapping.get(x, 'Other'))
+    job_location.index = job_location.index.map(lambda x: split_country_name(country_names_mapping.get(x, x)))
     fig, ax = plt.subplots(figsize=(8, 6))
     bars = ax.barh(job_location.index, job_location.values, color='#888888')
     for bar in bars:
@@ -181,9 +141,13 @@ def update_plot_with_category(tile, plot_type, category, data_set='Average Salar
             ax.barh(salary_per_country.index.map(map_country_names), salary_per_country.values, color='#5bc0de')
             style_plot(fig, ax, f'Average Salary for {category} by Country', 'Average Salary in USD')
         elif plot_type == 'pie':
-            salary_per_country = category_data.groupby('company_location')['salary_in_usd'].mean().sort_values().head(10)
-            ax.pie(salary_per_country, labels=salary_per_country.index.map(map_country_names), autopct='%1.1f%%', colors=plt.cm.Paired(range(len(salary_per_country))), textprops={'color': 'white'})
-            ax.set_title(f'Top 10 Average Salary for {category} by Country', color='white', fontsize=14, fontweight='bold')
+            salary_per_country = category_data.groupby('company_location')['salary_in_usd'].mean().sort_values(
+                ascending=False).head(10)
+            ax.pie(salary_per_country, labels=salary_per_country.index.map(lambda x: country_names_mapping.get(x, x)),
+                   autopct='%1.1f%%', colors=plt.cm.Paired(range(len(salary_per_country))),
+                   textprops={'color': 'white'})
+            ax.set_title(f'Top 10 Average Salary for {category} by Country', color='white', fontsize=14,
+                         fontweight='bold')
             fig.patch.set_facecolor('#2C2C2C')
             ax.set_facecolor('#1E1E1E')
         elif plot_type == 'box':
