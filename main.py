@@ -42,7 +42,7 @@ navbar_label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
 def show_about():
     about_message = (
-        "DS Salary Analysis App\n\n"
+        "DS Salaries Analysis App\n\n"
         "Version: 1.0\n"
         "This application provides an analysis of data science salaries. You can explore various "
         "aspects such as average salary by job title, salary by experience level, job distribution "
