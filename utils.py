@@ -21,36 +21,16 @@ job_categories = {
     'Architects': ['Data Architect', 'Principal Data Architect', 'Big Data Architect', 'Cloud Data Architect'],
     'Miscellaneous': ['Data Strategist', 'Data Specialist', 'Lead Data Analyst', 'MLOps Engineer', 'Data Operations Engineer', 'Data Science Consultant', 'Data Analytics Specialist', 'Machine Learning Infrastructure Engineer', 'Data Analytics Lead', 'Data Lead', 'Data Science Engineer', 'Manager Data Management', 'Data Analytics Engineer', 'Data Analytics Consultant', 'Data Management Specialist', 'Data Operations Analyst', 'Principal Data Analyst', 'Finance Data Analyst']
 }
-country_names_mapping = {
-    'IN': 'India',
-    'ES': 'Spain',
-    'CA': 'Canada',
-    'GB': 'United Kingdom',
-    'IT': 'Italy',
-    'FR': 'France',
-    'DE': 'Germany',
-    'NL': 'Netherlands',
-    'AU': 'Australia',
-    'BR': 'Brazil',
-    'US': 'United States',
-    'CN': 'China',
-    'JP': 'Japan',
-    'KR': 'South Korea',
-    'RU': 'Russia',
-    'MX': 'Mexico',
-    'AR': 'Argentina',
-    'ZA': 'South Africa',
-    'NG': 'Nigeria'
-}
+
 
 
 country_names_mapping = {
     'IN': 'India',
-    'US': 'United States',
+    'US': 'United\nStates',
     'CA': 'Canada',
     'DE': 'Germany',
     'FR': 'France',
-    'GB': 'United Kingdom',
+    'GB': 'United\nKingdom',
     'ES': 'Spain',
     'AU': 'Australia',
     'BR': 'Brazil',
@@ -65,7 +45,13 @@ country_names_mapping = {
     'IL': 'Israel',
     'MX': 'Mexico',
     'SE': 'Sweden',
+    'JP': 'Japan',
+    'NZ': 'New\nZealand',
+    'RU': 'Russia',
+    'PR': 'Puerto\nRico',
+    'BA': 'Bosnia\nand\nHerzegovina'
 }
+
 employment_type_mapping = {
     'CT': 'Contract',
     'FL': 'Freelance',
