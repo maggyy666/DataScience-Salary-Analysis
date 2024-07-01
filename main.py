@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import messagebox
 import customtkinter as ctk
 from plot_generator import (
     update_plot1_with_job_titles, update_plot1_with_experience_salary,
@@ -37,20 +37,32 @@ navbar.grid_columnconfigure(9, weight=0)
 navbar.grid_columnconfigure(10, weight=0)
 navbar.grid_columnconfigure(11, weight=1)
 
-
 navbar_label = ctk.CTkLabel(navbar, text="DS Salary Analysis App", fg_color='#333333', font=('Helvetica', 16, 'bold'))
 navbar_label.grid(row=0, column=0, padx=10, pady=10, sticky='w')
 
+def show_about():
+    about_message = (
+        "DS Salary Analysis App\n\n"
+        "Version: 1.0\n"
+        "This application provides an analysis of data science salaries. You can explore various "
+        "aspects such as average salary by job title, salary by experience level, job distribution "
+        "by location, and more. Use the navigation buttons to switch between different sections "
+        "and visualize the data using different chart types.\n\n"
+        "Instructions:\n"
+        "- Use the buttons on the top to switch between different datasets.\n"
+        "- Use the sidebar to switch between different job categories.\n"
+        "- Use the buttons at the bottom to switch between different chart types.\n\n"
+        "Thank you for using DS Salary Analysis App!"
+    )
+    messagebox.showinfo("About", about_message)
 
 def update_plot():
     update_plot_with_category(tile1, current_plot_type, current_section, current_data_set)
-
 
 def switch_job_data_set(data_set):
     global current_data_set
     current_data_set = data_set
     update_plot()
-
 
 # Functions for switching sections
 def switch_to_home():
@@ -60,36 +72,30 @@ def switch_to_home():
     update_plot()
     current_section_label.configure(text='Home')
 
-
 def switch_to_experience_salary():
     global current_data_set
     current_data_set = 'Salary by Experience'
     update_plot()
-
 
 def switch_to_job_location():
     global current_data_set
     current_data_set = 'Jobs by Location'
     update_plot()
 
-
 def switch_to_employment_type_distribution():
     global current_data_set
     current_data_set = 'Employment Type Distribution'
     update_plot()
-
 
 def switch_to_experience_distribution():
     global current_data_set
     current_data_set = 'Experience Distribution'
     update_plot()
 
-
 def switch_to_company_size_distribution():
     global current_data_set
     current_data_set = 'Company Size Distribution'
     update_plot()
-
 
 # PIE CHART BUTTONS - shifted to the right
 employment_type_distribution_button = ctk.CTkButton(navbar, text='Employment Type Distribution',
@@ -128,7 +134,7 @@ root.grid_rowconfigure(1, weight=1)
 
 # Mainframe
 main_frame = ctk.CTkFrame(root, corner_radius=0, fg_color='#1E1E1E')
-main_frame.grid(row=1, column=1, sticky='nsew')
+main_frame.grid(row=1,column=1, sticky='nsew')
 
 # Grid layout in mainframe
 main_frame.grid_columnconfigure(0, weight=1)
@@ -169,12 +175,10 @@ box_plot_button.grid(row=0, column=3, padx=10, pady=15)
 # Initially load the default plots
 update_plot()
 
-
 # Sidebar buttons
 def clear_main_frame():
     for widget in main_frame.winfo_children():
         widget.destroy()
-
 
 def show_category_analysis(category):
     clear_main_frame()
@@ -211,7 +215,6 @@ def show_category_analysis(category):
     # Default plot
     update_plot_with_category(tile1, 'bar', category, current_data_set)
 
-
 def switch_plot_type(plot_type):
     global current_plot_type
     current_plot_type = plot_type
@@ -221,13 +224,6 @@ def switch_data_set(data_set):
     global current_data_set
     current_data_set = data_set
     update_plot()
-
-def toggle_job_titles():
-    if job_titles_frame.winfo_ismapped():
-        job_titles_frame.grid_remove()
-    else:
-        job_titles_frame.grid()
-        about_button.grid(row=5 + len(job_titles), column=0, pady=5)
 
 home_button_sidebar = ctk.CTkButton(
     side_frame,
@@ -240,20 +236,8 @@ home_button_sidebar = ctk.CTkButton(
 )
 home_button_sidebar.grid(row=1, column=0, pady=5)
 
-job_titles_button = ctk.CTkButton(
-    side_frame,
-    text='Job Titles',
-    width=180,
-    height=40,
-    fg_color='#2C2C2C',
-    command=toggle_job_titles,
-    font=('Helvetica', 18, 'bold')
-)
-job_titles_button.grid(row=2, column=0, pady=5)
-
 job_titles_frame = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
-job_titles_frame.grid(row=3, column=0, sticky='ew', padx=5, pady=5)
-job_titles_frame.grid_remove()
+job_titles_frame.grid(row=2, column=0, sticky='ew', padx=5, pady=5)
 
 job_titles = [
     ('Data Scientists', lambda: show_category_analysis('Data Scientists')),
@@ -280,25 +264,24 @@ for i, (title, func) in enumerate(job_titles):
     )
     title_button.grid(row=i, column=0, pady=5)
 
-# About button
 about_button = ctk.CTkButton(
     side_frame,
     text='About',
     width=180,
     height=40,
     fg_color='#2C2C2C',
+    command=show_about,
     font=('Helvetica', 18, 'bold')
 )
-about_button.grid(row=4, column=0, pady=5)
+about_button.grid(row=3, column=0, pady=5)
 
 bottom_spacer = ctk.CTkFrame(side_frame, fg_color='#2C2C2C')
-bottom_spacer.grid(row=5, column=0, sticky='ew')
+bottom_spacer.grid(row=4, column=0, sticky='ew')
 
 # Center the sidebar buttons on the Y axis
 side_frame.grid_rowconfigure(0, weight=1)
-side_frame.grid_rowconfigure(6, weight=1)
+side_frame.grid_rowconfigure(5, weight=1)
 
 # Run
 root.mainloop()
-
 
